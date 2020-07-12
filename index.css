@@ -1,7 +1,6 @@
 canvas {
     border: 1px solid #000000;
     background-color: #72480a;
-    z-index: 1;
 }
 
 body {
@@ -9,12 +8,13 @@ body {
   }
 
 button {
-    z-index: 2;
 }
 
 .buttonR {
     background-color: #6e0808;
     border-radius: 50%;
-    width: 240px;
-    height: 240px;
+    width: 40px;
+    height: 40px;
+    position: absolute; top:200px; left:1400px; 
 }
+
