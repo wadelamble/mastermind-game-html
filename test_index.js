@@ -6,7 +6,8 @@ const screenSize = {
 function startGame() {
     myGameArea.start();
     // draw guessing area
-    rectangle(100, screenSize.height, "#1f1f14", screenSize.width - 100, 0);
+    var sideBarWidth = screenSize.width / 5;
+    rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
     drawBoard(screenSize);
 }
 
