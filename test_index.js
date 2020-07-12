@@ -5,7 +5,6 @@ const screenSize = {
 }
 function startGame() {
     myGameArea.start();
-    myGamePiece = new rectangle(30, 30, "red", 100, 150);
     drawBoard(screenSize);
 }
 
@@ -55,7 +54,11 @@ function drawBoard(screenSize) {
         //document.write(this.y);
         rectangle(screenSize.width, 1, "black", 0, this.y);
     }
-    circle(50, "blue", 300, 150);
+    this.r = (screenSize.height / 22) * 0.6
+    for (i = 0; i < 11; i++) {
+        this.y = i * screenSize.height / 11 + screenSize.height / 22
+        circle(r, "black", 100, y)
+    }
     
 }
 
