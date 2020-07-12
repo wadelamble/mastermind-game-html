@@ -19,6 +19,17 @@ var myGameArea = {
         this.canvas.width = screenSize.width;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        //button stuff
+        var testButton = document.createElement("BUTTON");
+        testButton.innerText = " test button";
+        testButton.style.position = 'absolute';
+        testButton.style.top = '50%';
+        testButton.style.left = '50%';
+        testButton.setAttribute('onclick', 'clicked()');
+        //testButton.setAttribute('position', 'absolute');
+        //testButton.setAttribute('top', '200px');
+        //testButton.setAttribute('left', '1400px');
+        document.body.appendChild(testButton);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
