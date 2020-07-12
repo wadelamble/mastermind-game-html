@@ -1,7 +1,9 @@
 var myGamePiece;
+var sizeRatio = 5/4;
+var sizeScaler = 300;
 const screenSize = {
-    height : 550,
-    width : 450
+    height : sizeRatio * sizeScaler,
+    width : sizeScaler
 }
 function startGame() {
     myGameArea.start();
@@ -63,15 +65,32 @@ function clicked() {
 }
 
 function drawBoard(screenSize) {
+    var sideBarWidth = screenSize.width / 5;
+    //Ask dad if we should change this
+    var gradeBarWidth = sideBarWidth;
+    var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
     for (i = 1; i < 11; i++) {
+        //horizontal lines
         this.y = i * screenSize.height / 11;
-        //document.write(this.y);
         rectangle(screenSize.width, 1, "black", 0, this.y);
     }
-    this.r = (screenSize.height / 22) * 0.6
+    //dividing vertical lines
+    rectangle(1, screenSize.height, "black", guessBarWidth, 0);
+    rectangle(1, screenSize.height, "black", guessBarWidth + gradeBarWidth, 0);
+
+    this.guessr = (screenSize.height / 22) * 0.5
+    this.grader = (screenSize.height / 22) * 0.2;
     for (i = 0; i < 11; i++) {
-        this.y = i * screenSize.height / 11 + screenSize.height / 22
-        circle(r, "black", 100, y)
+        this.y = i * screenSize.height / 11 + screenSize.height / 22;
+        for (j = 1; j < 5; j++) {
+            //guessing circles
+            this.x = j * guessBarWidth / 5;
+            circle(this.guessr, "black", this.x, this.y);
+            //grading circles
+            this.x = guessBarWidth + (j * gradeBarWidth / 5);
+            circle(this.grader, "black", this.x, this.y)
+        }
+        
     }
     
 }
