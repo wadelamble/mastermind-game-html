@@ -1,15 +1,20 @@
 var myGamePiece;
-
+const screenSize = {
+    height : 550,
+    width : 450
+}
 function startGame() {
     myGameArea.start();
     myGamePiece = new rectangle(30, 30, "red", 100, 150);
+    drawBoard(screenSize);
 }
+
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 1440;
-        this.canvas.height = 600;
+        this.canvas.height = screenSize.height;
+        this.canvas.width = screenSize.width;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
@@ -28,7 +33,31 @@ function rectangle(width, height, color, x, y) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
 }
 
+function circle(r, color, x, y) {
+    this.r = r
+    this.x = x
+    this.y = y
+    ctx = myGameArea.context
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+    ctx.fill();
+
+}
+
 function clicked() {
     alert("clicked");
 }
+
+function drawBoard(screenSize) {
+    for (i = 1; i < 11; i++) {
+        this.y = i * screenSize.height / 11;
+        //document.write(this.y);
+        rectangle(screenSize.width, 1, "black", 0, this.y);
+    }
+    circle(50, "blue", 300, 150);
+    
+}
+
+
 
