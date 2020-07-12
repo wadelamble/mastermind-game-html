@@ -1,7 +1,9 @@
 var myGamePiece;
+var sizeRatio = 5/4;
+var sizeScaler = 300;
 const screenSize = {
-    height : 550,
-    width : 450
+    height : sizeRatio * sizeScaler,
+    width : sizeScaler
 }
 function startGame() {
     myGameArea.start();
