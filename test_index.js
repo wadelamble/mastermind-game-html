@@ -7,7 +7,8 @@ const screenSize = {
 }
 var sideBarWidth = screenSize.width / 5;
 var numRows = 11;
-var verticalOffsetofCanvas;
+var verticalOffseTofCanvas = 10;
+var buttonSize = sideBarWidth / 3;
 
 function startGame() {
     myGameArea.start();
@@ -33,18 +34,26 @@ var myGameArea = {
 }
 
 function drawGuessButtons() {
-    var hOffset = screenSize.height / numRows;
-    hOffset *= 2;
-    hOffset = 10;
-    drawGuessButton("red", hOffset);
+    var hOffset = verticalOffseTofCanvas;
+    hOffset += (screenSize.height * 1.5 / numRows) - (buttonSize / 2);
+    drawGuessButton('buttonR', hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGuessButton('buttonB', hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGuessButton('buttonG', hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGuessButton('buttonY', hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGuessButton('buttonP', hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGuessButton('buttonW', hOffset);
 }
 
-function drawGuessButton (color, hOffset) {
-    var buttonSize = sideBarWidth / 3;
+function drawGuessButton (buttonStyle, hOffset) {
     buttonSizePx = buttonSize + 'px';
     var button = document.createElement("BUTTON");
     button.style.position = 'absolute';
-    button.setAttribute('class', 'buttonR');
+    button.setAttribute('class', buttonStyle);
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
@@ -77,7 +86,6 @@ function circle(r, color, x, y) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
     ctx.fill();
-
 }
 
 function text(font, text, x, y) {
@@ -129,12 +137,7 @@ function drawBoard(screenSize) {
                 circle(this.grader, "black", this.x, this.y)
             }
         }
-        
-        
     }
-
-
-    
 }
 
 
