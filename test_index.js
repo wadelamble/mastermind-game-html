@@ -23,26 +23,35 @@ var myGameArea = {
         this.canvas.width = screenSize.width;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        //button stuff
-        var testButton = document.createElement("BUTTON");
-        testButton.style.position = 'absolute';
-        testButton.setAttribute('class', 'buttonR');
-        var wOffset = document.getElementById("board").offsetLeft;
-        wOffset += screenSize.width - (sideBarWidth / 2) -20; // 20 is radius of button from style sheet
-        wOffsetStr = wOffset + 'px';
-        
-        var hOffset = 0;
-        hOffset += sizeScaler / 40; // 10 relates to percentage of board each row is;
-        hOffsetStr = hOffset + 'px';
-        
-        testButton.style.top = hOffsetStr;
-        testButton.style.left = wOffsetStr;
-        testButton.setAttribute('onclick', 'clicked()');
-        document.body.appendChild(testButton);
+        drawGuessButtons();
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+}
+
+function drawGuessButtons() {
+    var hOffset = screenSize.height / 8.4;
+    drawGuessButton("red", hOffset);
+}
+
+function drawGuessButton (color, hOffset) {
+    var buttonSize = sideBarWidth / 3;
+    buttonSizePx = buttonSize + 'px';
+    var button = document.createElement("BUTTON");
+    button.style.position = 'absolute';
+    button.setAttribute('class', 'buttonR');
+    button.style.width = buttonSizePx;
+    button.style.height = buttonSizePx;
+    var wOffset = document.getElementById("board").offsetLeft;
+    wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.setAttribute('onclick', 'clicked()');
+    document.body.appendChild(button);
 }
 
 function rectangle(width, height, color, x, y) {
