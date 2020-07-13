@@ -69,12 +69,22 @@ function circle(r, color, x, y) {
     this.r = r
     this.x = x
     this.y = y
-    ctx = myGameArea.context
+    ctx = myGameArea.context;
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
     ctx.fill();
 
+}
+
+function text(font, text, x, y) {
+    this.font = font
+    this.text = text
+    this.x = x
+    this.y = y
+    ctx = myGameArea.context;
+    ctx.font = font;
+    ctx.fillText(text, x, y);
 }
 
 function clicked() {
@@ -119,6 +129,8 @@ function drawBoard(screenSize) {
         
         
     }
+
+
     
 }
 
