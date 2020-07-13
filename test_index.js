@@ -7,6 +7,7 @@ const screenSize = {
 }
 var sideBarWidth = screenSize.width / 5;
 var numRows = 11;
+var verticalOffsetofCanvas;
 
 function startGame() {
     myGameArea.start();
@@ -33,6 +34,8 @@ var myGameArea = {
 
 function drawGuessButtons() {
     var hOffset = screenSize.height / numRows;
+    hOffset *= 2;
+    hOffset = 10;
     drawGuessButton("red", hOffset);
 }
 
