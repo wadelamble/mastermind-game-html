@@ -1,6 +1,6 @@
 var myGamePiece;
 var sizeRatio = 4/4;
-var sizeScaler = 640;
+var sizeScaler = 440;
 const screenSize = {
     height : sizeRatio * sizeScaler,
     width : sizeScaler
@@ -89,11 +89,16 @@ function drawBoard(screenSize) {
     for (i = 1; i < 11; i++) {
         //horizontal lines
         this.y = i * screenSize.height / 11;
-        rectangle(screenSize.width, 1, "black", 0, this.y);
+        rectangle(screenSize.width - sideBarWidth, 1, "black", 0, this.y);
     }
     //dividing vertical lines
     rectangle(1, screenSize.height, "black", guessBarWidth, 0);
     rectangle(1, screenSize.height, "black", guessBarWidth + gradeBarWidth, 0);
+
+    //shade the code box
+    rectangle(guessBarWidth, (screenSize.height / 11), "#331a00", 0, 0)
+    rectangle(gradeBarWidth - 1, screenSize.height / 11, "331a00", guessBarWidth + 1, 0)
+
 
     this.guessr = (screenSize.height / 22) * 0.5
     this.grader = (screenSize.height / 22) * 0.2;
@@ -104,9 +109,13 @@ function drawBoard(screenSize) {
             this.x = j * guessBarWidth / 5;
             circle(this.guessr, "black", this.x, this.y);
             //grading circles
-            this.x = guessBarWidth + (j * gradeBarWidth / 5);
-            circle(this.grader, "black", this.x, this.y)
+            //don't need a grade for the code
+            if (i !== 0) {
+                this.x = guessBarWidth +     (j * gradeBarWidth / 5);
+                circle(this.grader, "black", this.x, this.y)
+            }
         }
+        
         
     }
     
