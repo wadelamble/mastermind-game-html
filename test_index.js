@@ -1,14 +1,15 @@
 var myGamePiece;
-var sizeRatio = 5/4;
-var sizeScaler = 300;
+var sizeRatio = 4/4;
+var sizeScaler = 640;
 const screenSize = {
     height : sizeRatio * sizeScaler,
     width : sizeScaler
 }
+var sideBarWidth = screenSize.width / 5;
+
 function startGame() {
     myGameArea.start();
     // draw guessing area
-    var sideBarWidth = screenSize.width / 5;
     rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
     drawBoard(screenSize);
 }
@@ -17,20 +18,26 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
+        this.canvas.setAttribute('id', 'board');
         this.canvas.height = screenSize.height;
         this.canvas.width = screenSize.width;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         //button stuff
         var testButton = document.createElement("BUTTON");
-        testButton.innerText = " test button";
         testButton.style.position = 'absolute';
-        testButton.style.top = '50%';
-        testButton.style.left = '50%';
+        testButton.setAttribute('class', 'buttonR');
+        var wOffset = document.getElementById("board").offsetLeft;
+        wOffset += screenSize.width - (sideBarWidth / 2) -20; // 20 is radius of button from style sheet
+        wOffsetStr = wOffset + 'px';
+        
+        var hOffset = 0;
+        hOffset += sizeScaler / 40; // 10 relates to percentage of board each row is;
+        hOffsetStr = hOffset + 'px';
+        
+        testButton.style.top = hOffsetStr;
+        testButton.style.left = wOffsetStr;
         testButton.setAttribute('onclick', 'clicked()');
-        //testButton.setAttribute('position', 'absolute');
-        //testButton.setAttribute('top', '200px');
-        //testButton.setAttribute('left', '1400px');
         document.body.appendChild(testButton);
     },
     clear : function() {
@@ -61,7 +68,8 @@ function circle(r, color, x, y) {
 }
 
 function clicked() {
-    alert("clicked");
+    var offset = document.getElementById("board").offsetLeft;
+    alert(offset);
 }
 
 function drawBoard(screenSize) {

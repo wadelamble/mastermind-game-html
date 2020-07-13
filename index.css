@@ -9,11 +9,9 @@ body {
     background-color: rgb(5, 29, 4);
   }
 
-button {
-}
-
 .buttonR {
     background-color: #6e0808;
+    border:  #6e0808;
     border-radius: 50%;
     width: 40px;
     height: 40px;
