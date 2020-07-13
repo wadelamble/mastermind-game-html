@@ -6,6 +6,7 @@ const screenSize = {
     width : sizeScaler
 }
 var sideBarWidth = screenSize.width / 5;
+var numRows = 11;
 
 function startGame() {
     myGameArea.start();
@@ -31,7 +32,7 @@ var myGameArea = {
 }
 
 function drawGuessButtons() {
-    var hOffset = screenSize.height / 8.4;
+    var hOffset = screenSize.height / numRows;
     drawGuessButton("red", hOffset);
 }
 
@@ -86,9 +87,9 @@ function drawBoard(screenSize) {
     //Ask dad if we should change this
     var gradeBarWidth = sideBarWidth;
     var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
-    for (i = 1; i < 11; i++) {
+    for (i = 1; i < numRows; i++) {
         //horizontal lines
-        this.y = i * screenSize.height / 11;
+        this.y = i * screenSize.height / numRows;
         rectangle(screenSize.width - sideBarWidth, 1, "black", 0, this.y);
     }
     //dividing vertical lines
@@ -96,14 +97,14 @@ function drawBoard(screenSize) {
     rectangle(1, screenSize.height, "black", guessBarWidth + gradeBarWidth, 0);
 
     //shade the code box
-    rectangle(guessBarWidth, (screenSize.height / 11), "#331a00", 0, 0)
-    rectangle(gradeBarWidth - 1, screenSize.height / 11, "331a00", guessBarWidth + 1, 0)
+    rectangle(guessBarWidth, (screenSize.height / numRows), "#331a00", 0, 0)
+    rectangle(gradeBarWidth - 1, screenSize.height / numRows, "331a00", guessBarWidth + 1, 0)
 
 
-    this.guessr = (screenSize.height / 22) * 0.5
-    this.grader = (screenSize.height / 22) * 0.2;
-    for (i = 0; i < 11; i++) {
-        this.y = i * screenSize.height / 11 + screenSize.height / 22;
+    this.guessr = (screenSize.height / (numRows * 2)) * 0.5
+    this.grader = (screenSize.height / (numRows * 2)) * 0.2;
+    for (i = 0; i <  numRows; i++) {
+        this.y = i * screenSize.height / numRows + screenSize.height / (numRows * 2 );
         for (j = 1; j < 5; j++) {
             //guessing circles
             this.x = j * guessBarWidth / 5;
