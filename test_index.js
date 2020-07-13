@@ -34,7 +34,7 @@ var myGameArea = {
 }
 
 function drawGuessButtons() {
-    var hOffset = verticalOffseTofCanvas;
+    var hOffset = verticalOffsetOfCanvas;
     hOffset += (screenSize.height * 1.5 / numRows) - (buttonSize / 2);
     drawGuessButton('buttonR', hOffset);
     hOffset += (screenSize.height / numRows);
