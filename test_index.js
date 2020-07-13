@@ -7,8 +7,8 @@ const screenSize = {
 }
 var sideBarWidth = screenSize.width / 5;
 var numRows = 11;
-var verticalOffseTofCanvas = 10;
 var buttonSize = sideBarWidth / 3;
+var verticalOffsetOfCanvas = 10;
 
 function startGame() {
     myGameArea.start();
@@ -95,6 +95,8 @@ function text(font, text, x, y) {
     this.y = y
     ctx = myGameArea.context;
     ctx.font = font;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white"
     ctx.fillText(text, x, y);
 }
 
@@ -108,10 +110,15 @@ function drawBoard(screenSize) {
     //Ask dad if we should change this
     var gradeBarWidth = sideBarWidth;
     var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
+    var skip_lines = [1, 7, 8, 10];
     for (i = 1; i < numRows; i++) {
         //horizontal lines
         this.y = i * screenSize.height / numRows;
-        rectangle(screenSize.width - sideBarWidth, 1, "black", 0, this.y);
+        if (!(skip_lines.includes(i))) {
+            rectangle(screenSize.width - sideBarWidth, 1, "black", 0, this.y);
+        } else {
+            rectangle(screenSize.width, 1, "black", 0, this.y);
+        }
     }
     //dividing vertical lines
     rectangle(1, screenSize.height, "black", guessBarWidth, 0);
@@ -134,10 +141,13 @@ function drawBoard(screenSize) {
             //don't need a grade for the code
             if (i !== 0) {
                 this.x = guessBarWidth +     (j * gradeBarWidth / 5);
-                circle(this.grader, "black", this.x, this.y)
+                circle(this.grader, "black", this.x, this.y);
             }
         }
     }
+    this.fontSize = screenSize.height / numRows * 0.4;
+    this.fontString = fontSize + "px Arial"
+    text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
 }
 
 
