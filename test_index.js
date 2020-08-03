@@ -163,10 +163,9 @@ function whiteButtonClick () {
 function processClick(color) {
     getClickIndex();
     drawGuessCircle(element.x, element.y, color);
-    guessMatrix[element.x][element.y] = color;
+    guessMatrix[element.x - 1][element.y - 1] = color;
     //still in the middle of a guess
     if (element.x < 4) {
-        element.x ++;
     }
     //finished a guess
     else {
@@ -181,8 +180,8 @@ function processClick(color) {
                 //if they didn't, they used all the turns so
                 //PLAY A LOSE SCREEN HERE
         }
-        element.y ++;
-        element.x = 1
+        //element.y ++;
+        //element.x = 1
     }
 
 }
@@ -193,6 +192,8 @@ function getClickIndex() {
             if (guessMatrix[j][i] === '0') {
                 element.x = j + 1;
                 element.y = i + 1;
+                alert(element.x);
+                alert(element.y);
                 return;
             } 
         }
