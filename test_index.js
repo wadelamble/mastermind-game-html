@@ -161,7 +161,10 @@ function whiteButtonClick () {
 }
 
 function processClick(color) {
+    alert("processing...")
     getClickIndex();
+    alert(element.x);
+    alert(element.y);
     drawGuessCircle(element.x, element.y, color);
     guessMatrix[element.x - 1][element.y - 1] = color;
     //still in the middle of a guess
@@ -170,19 +173,18 @@ function processClick(color) {
     //finished a guess
     else {
         
-        //
-        //TODO
-        //
-        //
-        //Call a grade function here
-        if (element.y === 10) {
-                //if they got it, its fine
-                //if they didn't, they used all the turns so
-                //PLAY A LOSE SCREEN HERE
+        alert("grading...");
+        //make this the actual grade
+        grade = 0;
+        if (grade == true) {
+            alert("YAY YOU WON");
         }
-        //element.y ++;
-        //element.x = 1
+        else if (element.y === 10) {
+                //PLAY A LOSE SCREEN HERE
+                alert("U A LOSER");
+        }
     }
+    alert("click was processed");
 
 }
 
@@ -235,7 +237,9 @@ function text(font, text, x, y) {
 
 function drawGuessCircle(x_loc, y_loc, color) {
     this.x = x_loc * guessBarWidth / 5;
+    //alert(guessBarWidth)
     this.y = y_loc * screenSize.height / numRows + screenSize.height / (numRows * 2 );
+    //alert(this.x);
     circle(guessr, "red", this.x, this.y);
 }
 
