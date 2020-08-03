@@ -161,10 +161,7 @@ function whiteButtonClick () {
 }
 
 function processClick(color) {
-    alert("processing...")
     getClickIndex();
-    alert(element.x);
-    alert(element.y);
     drawGuessCircle(element.x, element.y, color);
     guessMatrix[element.x - 1][element.y - 1] = color;
     //still in the middle of a guess
@@ -184,8 +181,6 @@ function processClick(color) {
                 alert("U A LOSER");
         }
     }
-    alert("click was processed");
-
 }
 
 function getClickIndex() {
@@ -194,8 +189,6 @@ function getClickIndex() {
             if (guessMatrix[j][i] === '0') {
                 element.x = j + 1;
                 element.y = i + 1;
-                alert(element.x);
-                alert(element.y);
                 return;
             } 
         }
@@ -237,10 +230,8 @@ function text(font, text, x, y) {
 
 function drawGuessCircle(x_loc, y_loc, color) {
     this.x = x_loc * guessBarWidth / 5;
-    //alert(guessBarWidth)
     this.y = y_loc * screenSize.height / numRows + screenSize.height / (numRows * 2 );
-    //alert(this.x);
-    circle(guessr, "red", this.x, this.y);
+    circle(guessr, color, this.x, this.y);
 }
 
 function drawGradeCircle(x_loc, y_loc, color) {
