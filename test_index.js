@@ -11,8 +11,10 @@ var buttonSize = sideBarWidth / 3;
 var verticalOffsetOfCanvas = 10;
 var color_clicked = 'black'
 //grade, guess circle radius
-this.guessr = (screenSize.height / (numRows * 2)) * 0.5;
-this.grader = (screenSize.height / (numRows * 2)) * 0.2;
+var guessr = (screenSize.height / (numRows * 2)) * 0.5;
+var grader = (screenSize.height / (numRows * 2)) * 0.2;
+var guess_loc = [1, 1];
+
 
 function startGame() {
     myGameArea.start();
@@ -109,6 +111,31 @@ function yellow() {
 }
 function white() {
     color_clicked = 'white';
+}
+
+function clicked(color) {
+    drawGuessCircle(guess_loc[0], guess_loc[1]);
+    //still in the middle of a guess
+    if (guess_loc[0] < 4) {
+        guess_loc[0] ++;
+    }
+    //finished a guess
+    else {
+        
+        //
+        //TODO
+        //
+        //
+        //Call a grade function here
+        if (guess_loc[1] === 10) {
+                //if they got it, its fine
+                //if they didn't, they used all the turns so
+                //PLAY A LOSE SCREEN HERE
+        }
+        guess_loc[1] ++;
+        guess_loc[0] = 1
+    }
+
 }
 function rectangle(width, height, color, x, y) {
     this.width = width;
