@@ -23,56 +23,54 @@ var grader = (screenSize.height / (numRows * 2)) * 0.2;
 var guess_loc = [1, 1];
 
 
-var yStr = '20';
-
 var redButton = document.createElement("button");
 redButton.id = "redButton";
-redButton.style.backgroundColor = '#6e0808';
-redButton.style.border = '#6e0808';
-redButton.addEventListener('click', function() { redButtonClick('20'); })
+redButton.style.backgroundColor = 'red';
+redButton.style.border = 'red';
+redButton.addEventListener('click', function() { redButtonClick(); })
 
 var blueButton = document.createElement("button");
 blueButton.id = "blueButton";
 blueButton.style.backgroundColor = '#001380';
 blueButton.style.border = '#001380';
-blueButton.addEventListener('click', function() { blueButtonClick('40', '20'); })
+blueButton.addEventListener('click', function() { blueButtonClick(); })
 
 var greenButton = document.createElement("button");
 greenButton.id = "greenButton";
 greenButton.style.backgroundColor = '#157e00';
 greenButton.style.border = '#157e00';
-greenButton.addEventListener('click', function() { greenButtonClick('60', '20'); })
+greenButton.addEventListener('click', function() { greenButtonClick(); })
 
 var yellowButton = document.createElement("button");
 yellowButton.id = "yellowButton";
 yellowButton.style.backgroundColor = '#e0e400';
 yellowButton.style.border = '#e0e400';
-yellowButton.addEventListener('click', function() { yellowButtonClick('80', '20'); })
+yellowButton.addEventListener('click', function() { yellowButtonClick(); })
 
 var purpleButton = document.createElement("button");
 purpleButton.id = "purpleButton";
 purpleButton.style.backgroundColor = '#770186';
 purpleButton.style.border = '#770186';
-purpleButton.addEventListener('click', function() { purpleButtonClick('100', '20'); })
+purpleButton.addEventListener('click', function() { purpleButtonClick(); })
 
 var whiteButton = document.createElement("button");
 whiteButton.id = "whiteButton";
 whiteButton.style.backgroundColor = '#ffffff';
 whiteButton.style.border = '#ffffff';
-whiteButton.onclick = function() { whiteButtonClick('120', '20'); }
+whiteButton.addEventListener('click', function() { whiteButtonClick(); })
 
 var clickRound = 0;
 
 var guessMatrix =   [['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0'],
-                    ['0', '0', '0', '0']];
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0'],
+                     ['0', '0', '0', '0']];
                     
 var element = {
     x: 0,
@@ -142,59 +140,24 @@ function redButtonClick () {
     processClick(redButton.style.backgroundColor);
 }
 
-function blueButtonClick (xStr, yStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, blueButton.style.backgroundColor, x, y);
-    clickRound++;
+function blueButtonClick () {
+    processClick(blueButton.style.backgroundColor);
 }
 
-function greenButtonClick (xStr, yStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, greenButton.style.backgroundColor, x, y);
-    clickRound++;
+function greenButtonClick () {
+    processClick(greenButton.style.backgroundColor);
 }
 
-function yellowButtonClick (xStr, yStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, yellowButton.style.backgroundColor, x, y);
-    clickRound++;
+function yellowButtonClick () {
+    processClick(yellowButton.style.backgroundColor);
 }
 
-function purpleButtonClick (xStr, yStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, purpleButton.style.backgroundColor, x, y);
-    clickRound++;
+function purpleButtonClick () {
+    processClick(purpleButton.style.backgroundColor);
 }
 
-function whiteButtonClick (xStr, yStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, whiteButton.style.backgroundColor, x, y);
-    clickRound++;
-}
-
-function green() {
-    color_clicked = 'green';
-    alert("hello?");
-}
-function blue() {
-    color_clicked = 'blue';
-}
-function red() {
-    color_clicked = 'red';
-}
-function purple() {
-    color_clicked = 'purple';
-}
-function yellow() {
-    color_clicked = 'yellow';
-}
-function white() {
-    color_clicked = 'white';
+function whiteButtonClick () {
+    processClick(whiteButton.style.backgroundColor);
 }
 
 function processClick(color) {
@@ -252,7 +215,6 @@ function rectangle(width, height, color, x, y) {
 }
 
 function circle(r, color, x, y) {
-    //alert("ok now it is actually drawing"); 
     this.r = r;
     this.x = x;
     this.y = y;
