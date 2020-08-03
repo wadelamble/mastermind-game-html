@@ -8,7 +8,11 @@ const screenSize = {
     height : sizeRatio * sizeScaler,
     width : sizeScaler
 }
+
 var sideBarWidth = screenSize.width / 5;
+//Ask dad if we should change this
+var gradeBarWidth = sideBarWidth;
+var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
 var numRows = 11;
 var buttonSize = sideBarWidth / 3;
 var verticalOffsetOfCanvas = 10;
@@ -58,6 +62,26 @@ whiteButton.style.border = '#ffffff';
 whiteButton.onclick = function() { whiteButtonClick('120', '20'); }
 
 var clickRound = 0;
+
+var guessMatrix =   [['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0'],
+                    ['0', '0', '0', '0']];
+                    
+var element = {
+    x: 0,
+    y: 0
+}
+
+//
+// end globals
+//
 
 function startGame() {
     myGameArea.start();
@@ -114,13 +138,8 @@ function drawGuessButton (button, hOffset) {
     document.body.appendChild(button);
 }
 
-function redButtonClick (xStr) {
-    x = Number(xStr);
-    y = Number(yStr);
-    circle(30, redButton.style.backgroundColor, x, y);
-    y += 30;
-    yStr = y.toString();
-    clickRound++;
+function redButtonClick () {
+    processClick(redButton.style.backgroundColor);
 }
 
 function blueButtonClick (xStr, yStr) {
@@ -178,11 +197,14 @@ function white() {
     color_clicked = 'white';
 }
 
-function clicked(color) {
-    drawGuessCircle(guess_loc[0], guess_loc[1]);
+function processClick(color) {
+    getClickIndex();
+    //alert("hi")
+    drawGuessCircle(element.x, element.y, color);
+    guessMatrix[element.x][element.y] = color;
     //still in the middle of a guess
-    if (guess_loc[0] < 4) {
-        guess_loc[0] ++;
+    if (element.x < 4) {
+        element.x ++;
     }
     //finished a guess
     else {
@@ -192,15 +214,27 @@ function clicked(color) {
         //
         //
         //Call a grade function here
-        if (guess_loc[1] === 10) {
+        if (element.y === 10) {
                 //if they got it, its fine
                 //if they didn't, they used all the turns so
                 //PLAY A LOSE SCREEN HERE
         }
-        guess_loc[1] ++;
-        guess_loc[0] = 1
+        element.y ++;
+        element.x = 1
     }
 
+}
+
+function getClickIndex() {
+    for (i=0; i < 10; i++) {
+        for (j=0; j < 4; j++) {
+            if (guessMatrix[j][i] === '0') {
+                element.x = j + 1;
+                element.y = i + 1;
+                return;
+            } 
+        }
+    }
 }
 
 function rectangle(width, height, color, x, y) {
@@ -214,9 +248,10 @@ function rectangle(width, height, color, x, y) {
 }
 
 function circle(r, color, x, y) {
-    this.r = r
-    this.x = x
-    this.y = y
+    //alert("ok now it is actually drawing"); 
+    this.r = r;
+    this.x = x;
+    this.y = y;
     ctx = myGameArea.context;
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -238,8 +273,10 @@ function text(font, text, x, y) {
 
 function drawGuessCircle(x_loc, y_loc, color) {
     this.x = x_loc * guessBarWidth / 5;
+    alert(guessBarWidth)
     this.y = y_loc * screenSize.height / numRows + screenSize.height / (numRows * 2 );
-    circle(guessr, color, this.x, this.y)
+    alert(this.x);
+    circle(guessr, "red", this.x, this.y);
 }
 
 function drawGradeCircle(x_loc, y_loc, color) {
@@ -249,10 +286,6 @@ function drawGradeCircle(x_loc, y_loc, color) {
 }
 
 function drawBoard(screenSize) {
-    var sideBarWidth = screenSize.width / 5;
-    //Ask dad if we should change this
-    var gradeBarWidth = sideBarWidth;
-    var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
     var skip_lines = [1, 7, 8, 10];
     for (i = 1; i < numRows; i++) {
         //horizontal lines
