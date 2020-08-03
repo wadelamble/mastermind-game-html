@@ -1,3 +1,6 @@
+//
+// Globals -- eek so many, what's the right pattern here?
+//
 var myGamePiece;
 var sizeRatio = 4/4;
 var sizeScaler = 440;
@@ -10,13 +13,49 @@ var numRows = 11;
 var buttonSize = sideBarWidth / 3;
 var verticalOffsetOfCanvas = 10;
 
+var yStr = '20';
+
+var redButton = document.createElement("button");
+redButton.id = "redButton";
+redButton.style.backgroundColor = '#6e0808';
+redButton.style.border = '#6e0808';
+redButton.addEventListener('click', function() { redButtonClick('20'); })
+
+var blueButton = document.createElement("button");
+blueButton.id = "blueButton";
+blueButton.style.backgroundColor = '#001380';
+blueButton.style.border = '#001380';
+blueButton.addEventListener('click', function() { blueButtonClick('40', '20'); })
+
+var greenButton = document.createElement("button");
+greenButton.id = "greenButton";
+greenButton.style.backgroundColor = '#157e00';
+greenButton.style.border = '#157e00';
+greenButton.addEventListener('click', function() { greenButtonClick('60', '20'); })
+
+var yellowButton = document.createElement("button");
+yellowButton.id = "yellowButton";
+yellowButton.style.backgroundColor = '#e0e400';
+yellowButton.style.border = '#e0e400';
+yellowButton.addEventListener('click', function() { yellowButtonClick('80', '20'); })
+
+var purpleButton = document.createElement("button");
+purpleButton.id = "purpleButton";
+purpleButton.style.backgroundColor = '#770186';
+purpleButton.style.border = '#770186';
+purpleButton.addEventListener('click', function() { purpleButtonClick('100', '20'); })
+
+var whiteButton = document.createElement("button");
+whiteButton.id = "whiteButton";
+whiteButton.style.backgroundColor = '#ffffff';
+whiteButton.style.border = '#ffffff';
+whiteButton.onclick = function() { whiteButtonClick('120', '20'); }
+
+var clickRound = 0;
+
 function startGame() {
     myGameArea.start();
-    // draw guessing area
-    rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
-    drawBoard(screenSize);
 }
-
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -26,7 +65,13 @@ var myGameArea = {
         this.canvas.width = screenSize.width;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
+        drawBoard(screenSize);
         drawGuessButtons();
+        if (clickRound > 3)
+        {
+            whiteButton.onclick = function() { whiteButtonClick('120', '50'); }
+        }
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -36,35 +81,75 @@ var myGameArea = {
 function drawGuessButtons() {
     var hOffset = verticalOffsetOfCanvas;
     hOffset += (screenSize.height * 1.5 / numRows) - (buttonSize / 2);
-    drawGuessButton('buttonR', hOffset);
+    drawGuessButton(redButton, hOffset);
     hOffset += (screenSize.height / numRows);
-    drawGuessButton('buttonB', hOffset);
+    drawGuessButton(blueButton, hOffset);
     hOffset += (screenSize.height / numRows);
-    drawGuessButton('buttonG', hOffset);
+    drawGuessButton(greenButton, hOffset);
     hOffset += (screenSize.height / numRows);
-    drawGuessButton('buttonY', hOffset);
+    drawGuessButton(yellowButton, hOffset);
     hOffset += (screenSize.height / numRows);
-    drawGuessButton('buttonP', hOffset);
+    drawGuessButton(purpleButton, hOffset);
     hOffset += (screenSize.height / numRows);
-    drawGuessButton('buttonW', hOffset);
+    drawGuessButton(whiteButton, hOffset);
 }
 
-function drawGuessButton (buttonStyle, hOffset) {
-    buttonSizePx = buttonSize + 'px';
-    var button = document.createElement("BUTTON");
+function drawGuessButton (button, hOffset) {
+    var buttonSizePx = buttonSize + 'px';
     button.style.position = 'absolute';
-    button.setAttribute('class', buttonStyle);
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
     wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
-    
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
-    button.setAttribute('onclick', 'clicked()');
     document.body.appendChild(button);
+}
+
+function redButtonClick (xStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, redButton.style.backgroundColor, x, y);
+    y += 30;
+    yStr = y.toString();
+    clickRound++;
+}
+
+function blueButtonClick (xStr, yStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, blueButton.style.backgroundColor, x, y);
+    clickRound++;
+}
+
+function greenButtonClick (xStr, yStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, greenButton.style.backgroundColor, x, y);
+    clickRound++;
+}
+
+function yellowButtonClick (xStr, yStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, yellowButton.style.backgroundColor, x, y);
+    clickRound++;
+}
+
+function purpleButtonClick (xStr, yStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, purpleButton.style.backgroundColor, x, y);
+    clickRound++;
+}
+
+function whiteButtonClick (xStr, yStr) {
+    x = Number(xStr);
+    y = Number(yStr);
+    circle(30, whiteButton.style.backgroundColor, x, y);
+    clickRound++;
 }
 
 function rectangle(width, height, color, x, y) {
@@ -98,11 +183,6 @@ function text(font, text, x, y) {
     ctx.textAlign = "center";
     ctx.fillStyle = "white"
     ctx.fillText(text, x, y);
-}
-
-function clicked() {
-    var offset = document.getElementById("board").offsetLeft;
-    alert(offset);
 }
 
 function drawBoard(screenSize) {
