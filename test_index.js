@@ -96,10 +96,6 @@ var myGameArea = {
         rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
         drawBoard(screenSize);
         drawGuessButtons();
-        if (clickRound > 3)
-        {
-            whiteButton.onclick = function() { whiteButtonClick('120', '50'); }
-        }
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -163,8 +159,14 @@ function whiteButtonClick () {
 function processClick(color) {
     getClickIndex();
     drawGuessCircle(element.x, element.y, color);
-    guessMatrix[element.x - 1][element.y - 1] = color;
+    //alert(element.x - 1)
+    //alert(element.y - 1)
+    guessMatrix[element.y - 1][element.x - 1] = color;
+    //alert(guessMatrix)
     //still in the middle of a guess
+    if (element.y === 4) {
+        //alert(guessMatrix)
+    }
     if (element.x < 4) {
     }
     //finished a guess
@@ -184,11 +186,20 @@ function processClick(color) {
 }
 
 function getClickIndex() {
+    //alert("inside getclikcindex")
     for (i=0; i < 10; i++) {
         for (j=0; j < 4; j++) {
-            if (guessMatrix[j][i] === '0') {
+            if (guessMatrix[i][j] === '0') {
+                //alert("thingy")
+                //alert(guessMatrix[i][j])
+                //alert("j and i")
+                //alert(j)
+                //alert(i)
                 element.x = j + 1;
                 element.y = i + 1;
+                //alert("new indices")
+                //alert(element.x)
+                //alert(element.y)
                 return;
             } 
         }
