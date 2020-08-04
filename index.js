@@ -77,6 +77,11 @@ var element = {
     y: 0
 }
 
+var grade = {
+    gradeValues = [0, 0, 0, 0],
+    gradeLocations = 
+}
+
 //
 // end globals
 //

@@ -1,12 +1,12 @@
 canvas {
-    border: 1px solid #000000;
+    border: 1px solid #2f3374;
     background-color: #663300;
     margin: auto;
     display: block;
 }
 
 body {
-    background-color: rgb(5, 29, 4);
+    background-color: rgba(15, 15, 15, 0.959);
   }
 
 button {
@@ -15,36 +15,3 @@ button {
     top:200px; 
     left:1400px; 
 }
-
-.buttonR {
-    background-color: #6e0808;
-    border:  #6e0808;
-}
-
-
-.buttonB {
-    background-color: #001380;
-    border:  #001380;
-}
-
-
-.buttonG {
-    background-color: #157e00;
-    border:  #157e00;
-}
-
-.buttonY {
-    background-color: #e0e400;
-    border:  #e0e400;
-}
-
-.buttonP {
-    background-color: #770186;
-    border:  #770186;
-}
-
-.buttonW {
-    background-color: #ffffff;
-    border:  #ffffff;
-}
-
