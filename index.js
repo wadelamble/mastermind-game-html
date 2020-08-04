@@ -164,22 +164,15 @@ function whiteButtonClick () {
 function processClick(color) {
     getClickIndex();
     drawGuessCircle(element.x, element.y, color);
-    //alert(element.x - 1)
-    //alert(element.y - 1)
     guessMatrix[element.y - 1][element.x - 1] = color;
-    //alert(guessMatrix)
-    //still in the middle of a guess
-    if (element.y === 4) {
-        //alert(guessMatrix)
-    }
     if (element.x < 4) {
     }
     //finished a guess
     else {
         
-        alert("grading...");
+        //alert("grading...");
         //make this the actual grade
-        grade = 0;
+        grade = computerGrade(element.y - 1);
         if (grade == true) {
             alert("YAY YOU WON");
         }
@@ -195,16 +188,8 @@ function getClickIndex() {
     for (i=0; i < 10; i++) {
         for (j=0; j < 4; j++) {
             if (guessMatrix[i][j] === '0') {
-                //alert("thingy")
-                //alert(guessMatrix[i][j])
-                //alert("j and i")
-                //alert(j)
-                //alert(i)
                 element.x = j + 1;
                 element.y = i + 1;
-                //alert("new indices")
-                //alert(element.x)
-                //alert(element.y)
                 return;
             } 
         }
@@ -256,6 +241,20 @@ function drawGradeCircle(x_loc, y_loc, color) {
     circle(grader, color, this.x, this.y)
 }
 
+function computerGrade(gradeRow) {
+    toBeGraded = guessMatrix[gradeRow]
+    if (toBeGraded.includes('0')) {
+        alert("fail")
+    }
+
+
+
+
+
+
+    
+    return true
+}
 function drawBoard(screenSize) {
     var skip_lines = [1, 7, 8, 10];
     for (i = 1; i < numRows; i++) {
