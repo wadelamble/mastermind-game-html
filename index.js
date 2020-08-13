@@ -31,32 +31,32 @@ redButton.addEventListener('click', function() { redButtonClick(); });
 
 var blueButton = document.createElement("button");
 blueButton.id = "blueButton";
-blueButton.style.backgroundColor = '#001380';
-blueButton.style.border = '#001380';
+blueButton.style.backgroundColor = 'blue';
+blueButton.style.border = 'blue';
 blueButton.addEventListener('click', function() { blueButtonClick(); });
 
 var greenButton = document.createElement("button");
 greenButton.id = "greenButton";
-greenButton.style.backgroundColor = '#157e00';
-greenButton.style.border = '#157e00';
+greenButton.style.backgroundColor = 'green';
+greenButton.style.border = 'green';
 greenButton.addEventListener('click', function() { greenButtonClick(); });
 
 var yellowButton = document.createElement("button");
 yellowButton.id = "yellowButton";
-yellowButton.style.backgroundColor = '#e0e400';
-yellowButton.style.border = '#e0e400';
+yellowButton.style.backgroundColor = 'yellow';
+yellowButton.style.border = 'yellow';
 yellowButton.addEventListener('click', function() { yellowButtonClick(); });
 
 var purpleButton = document.createElement("button");
 purpleButton.id = "purpleButton";
-purpleButton.style.backgroundColor = '#770186';
-purpleButton.style.border = '#770186';
+purpleButton.style.backgroundColor = 'purple';
+purpleButton.style.border = 'purple';
 purpleButton.addEventListener('click', function() { purpleButtonClick(); });
 
 var whiteButton = document.createElement("button");
 whiteButton.id = "whiteButton";
-whiteButton.style.backgroundColor = '#ffffff';
-whiteButton.style.border = '#ffffff';
+whiteButton.style.backgroundColor = 'white';
+whiteButton.style.border = 'white';
 whiteButton.addEventListener('click', function() { whiteButtonClick(); });
 
 var clickRound = 0;
@@ -78,9 +78,11 @@ var element = {
 };
 
 var grade = {
-    reds: 1,
-    whites: 1
+    reds: 0,
+    whites: 0
 };
+
+var code = ["blue", "green", "blue", "green"]
 
 //
 // end globals
@@ -169,7 +171,6 @@ function processClick(color) {
     }
     //finished a guess
     else {
-        
         //make this the actual grade
         computerGrade(element.y - 1);
         var y = element.y;
@@ -183,7 +184,7 @@ function processClick(color) {
             drawGradeCircle(x, y, "white");
         }
         
-        if (grade == [2, 2, 2, 2]) {
+        if (grade.reds === 4) {
             alert("YAY YOU WON");
         }
         else if (element.y === 10) {
@@ -255,9 +256,27 @@ function computerGrade(gradeRow) {
     if (toBeGraded.includes('0')) {
         alert("fail");
     }
-    // code based on grading
-    grade.reds = 1;
-    grade.whites = 2;
+    grade.reds = 0;
+    grade.whites = 0;
+    const guess_2 = [];
+    const code_2 = [];
+    for (i = 0; i < 4; i++) {
+        if (code[i] === toBeGraded[i]) {
+            grade.reds++;  
+        }
+        else {
+            guess_2.push(toBeGraded[i]);
+            code_2.push(code[i]);
+        }
+    }
+    while (guess_2.length !== 0) {
+        if (code_2.includes(guess_2[0])) {
+            grade.whites++;
+            toRemoveIndex = code_2.indexOf(guess_2[0]);
+            code_2.splice(toRemoveIndex, 1);
+        }
+        guess_2.splice(0, 1);
+    }
 }
 
 
