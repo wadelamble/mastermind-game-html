@@ -22,7 +22,6 @@ var guessr = (screenSize.height / (numRows * 2)) * 0.5;
 var grader = (screenSize.height / (numRows * 2)) * 0.2;
 var guess_loc = [1, 1];
 
-
 var redButton = document.createElement("button");
 redButton.id = "redButton";
 redButton.style.backgroundColor = 'red';
@@ -58,6 +57,18 @@ whiteButton.id = "whiteButton";
 whiteButton.style.backgroundColor = '#ffffff';
 whiteButton.style.border = '#ffffff';
 whiteButton.addEventListener('click', function() { whiteButtonClick(); });
+
+var redGradeButton = document.createElement("button");
+redGradeButton.id = "redGradeButton";
+redGradeButton.style.backgroundColor = 'red';
+redGradeButton.style.border = 'red';
+redGradeButton.addEventListener('click', function() { redGradeButtonClick(); });
+
+var whiteGradeButton = document.createElement("button");
+whiteGradeButton.id = "whiteGradeButton";
+whiteGradeButton.style.backgroundColor = 'white';
+whiteGradeButton.style.border = 'white';
+whiteGradeButton.addEventListener('click', function() { whiteGradeButtonClick(); });
 
 var clickRound = 0;
 
@@ -101,6 +112,7 @@ var myGameArea = {
         rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
         drawBoard(screenSize);
         drawGuessButtons();
+        drawGradeButtons();
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -137,6 +149,30 @@ function drawGuessButton (button, hOffset) {
     document.body.appendChild(button);
 }
 
+function drawGradeButtons() {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)*7;
+    hOffset += (screenSize.height * 1.5 / numRows) - (buttonSize / 2);
+    drawGradeButton(redGradeButton, hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGradeButton(whiteGradeButton, hOffset);
+}
+
+function drawGradeButton (button, hOffset) {
+    var buttonSizePx = (buttonSize / 2)+ 'px';
+    button.style.position = 'absolute';
+    button.style.width = buttonSizePx;
+    button.style.height = buttonSizePx;
+    var wOffset = document.getElementById("board").offsetLeft;
+    wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    document.body.appendChild(button);
+}
+
+
+
 function redButtonClick () {
     processClick(redButton.style.backgroundColor);
 }
@@ -159,6 +195,14 @@ function purpleButtonClick () {
 
 function whiteButtonClick () {
     processClick(whiteButton.style.backgroundColor);
+}
+
+function redGradeButtonClick () {
+    processGradeClick(redGradeButton.style.backgroundColor);
+}
+
+function whiteGradeButtonClick () {
+    processGradeClick(whiteGradeButton.style.backgroundColor);
 }
 
 function processClick(color) {
@@ -190,6 +234,14 @@ function processClick(color) {
                 //PLAY A LOSE SCREEN HERE
                 alert("U A LOSER");
         }
+    }
+}
+
+function processGradeClick(color) {
+    drawGradeCircle(numPlayerGradeClicks, element.y, color);
+    numPlayerGradeClick++;
+    if (numPlayerGradeClick > 4) {
+        alert("too many player grades entered");
     }
 }
 
@@ -227,15 +279,16 @@ function circle(r, color, x, y) {
 }
 
 function text(font, text, x, y) {
-    this.font = font
-    this.text = text
-    this.x = x
-    this.y = y
+    //this.font = font
+    //this.text = text
+    //this.x = x
+    //this.y = y
     ctx = myGameArea.context;
     ctx.font = font;
     ctx.textAlign = "center";
     ctx.fillStyle = "white"
     ctx.fillText(text, x, y);
+    //ctx.fillText(text, x-50, y+50);
 }
 
 function drawGuessCircle(x_loc, y_loc, color) {
@@ -300,18 +353,8 @@ function drawBoard(screenSize) {
     this.fontSize = screenSize.height / numRows * 0.4;
     this.fontString = fontSize + "px Arial"
     text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
+    text(this.fontString, "GRADES", guessBarWidth + gradeBarWidth * 1.5, screenSize.height - (screenSize.height * 3 / numRows) - fontSize);
 }
-/*
-
-for (num_full_guess = 1; num_full_guess < 11; num_full_guess++) {
-    this.y = num_full_guess * screenSize.height / numRows + screenSize.height / (numRows * 2 );
-    for (num_full_guess = 1; num_full_guess < 5; num_full_guess++) {
-        guess_color = 
-        this.x = num_part_guess * guessBarWidth / 5
-        circle(this.guessr, guess_color, this.x, this.y)
-    }
-}
-*/
 
 
 
