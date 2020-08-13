@@ -7,7 +7,7 @@ var sizeScaler = 440;
 const screenSize = {
     height : sizeRatio * sizeScaler,
     width : sizeScaler
-}
+};
 
 var sideBarWidth = screenSize.width / 5;
 //Ask dad if we should change this
@@ -16,7 +16,7 @@ var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
 var numRows = 11;
 var buttonSize = sideBarWidth / 3;
 var verticalOffsetOfCanvas = 10;
-var color_clicked = 'black'
+var color_clicked = 'black';
 //grade, guess circle radius
 var guessr = (screenSize.height / (numRows * 2)) * 0.5;
 var grader = (screenSize.height / (numRows * 2)) * 0.2;
@@ -27,37 +27,37 @@ var redButton = document.createElement("button");
 redButton.id = "redButton";
 redButton.style.backgroundColor = 'red';
 redButton.style.border = 'red';
-redButton.addEventListener('click', function() { redButtonClick(); })
+redButton.addEventListener('click', function() { redButtonClick(); });
 
 var blueButton = document.createElement("button");
 blueButton.id = "blueButton";
 blueButton.style.backgroundColor = '#001380';
 blueButton.style.border = '#001380';
-blueButton.addEventListener('click', function() { blueButtonClick(); })
+blueButton.addEventListener('click', function() { blueButtonClick(); });
 
 var greenButton = document.createElement("button");
 greenButton.id = "greenButton";
 greenButton.style.backgroundColor = '#157e00';
 greenButton.style.border = '#157e00';
-greenButton.addEventListener('click', function() { greenButtonClick(); })
+greenButton.addEventListener('click', function() { greenButtonClick(); });
 
 var yellowButton = document.createElement("button");
 yellowButton.id = "yellowButton";
 yellowButton.style.backgroundColor = '#e0e400';
 yellowButton.style.border = '#e0e400';
-yellowButton.addEventListener('click', function() { yellowButtonClick(); })
+yellowButton.addEventListener('click', function() { yellowButtonClick(); });
 
 var purpleButton = document.createElement("button");
 purpleButton.id = "purpleButton";
 purpleButton.style.backgroundColor = '#770186';
 purpleButton.style.border = '#770186';
-purpleButton.addEventListener('click', function() { purpleButtonClick(); })
+purpleButton.addEventListener('click', function() { purpleButtonClick(); });
 
 var whiteButton = document.createElement("button");
 whiteButton.id = "whiteButton";
 whiteButton.style.backgroundColor = '#ffffff';
 whiteButton.style.border = '#ffffff';
-whiteButton.addEventListener('click', function() { whiteButtonClick(); })
+whiteButton.addEventListener('click', function() { whiteButtonClick(); });
 
 var clickRound = 0;
 
@@ -75,12 +75,12 @@ var guessMatrix =   [['0', '0', '0', '0'],
 var element = {
     x: 0,
     y: 0
-}
+};
 
 var grade = {
-    gradeValues = [0, 0, 0, 0],
-    gradeLocations = 
-}
+    reds: 1,
+    whites: 1
+};
 
 //
 // end globals
@@ -170,10 +170,20 @@ function processClick(color) {
     //finished a guess
     else {
         
-        //alert("grading...");
         //make this the actual grade
-        grade = computerGrade(element.y - 1);
-        if (grade == true) {
+        computerGrade(element.y - 1);
+        var y = element.y;
+        var x = 0;
+        for (i = 1; i <= grade.reds; i++) {
+            x++;
+            drawGradeCircle(x, y, "red");
+        }
+        for (i = 1; i <= grade.whites; i++) {
+            x++;
+            drawGradeCircle(x, y, "white");
+        }
+        
+        if (grade == [2, 2, 2, 2]) {
             alert("YAY YOU WON");
         }
         else if (element.y === 10) {
@@ -184,7 +194,6 @@ function processClick(color) {
 }
 
 function getClickIndex() {
-    //alert("inside getclikcindex")
     for (i=0; i < 10; i++) {
         for (j=0; j < 4; j++) {
             if (guessMatrix[i][j] === '0') {
@@ -236,25 +245,22 @@ function drawGuessCircle(x_loc, y_loc, color) {
 }
 
 function drawGradeCircle(x_loc, y_loc, color) {
-    this.x = guessBarWidth + (x_loc * gradeBarWidth / 5)
+    this.x = guessBarWidth + (x_loc * gradeBarWidth / 5);
     this.y = y_loc * screenSize.height / numRows + screenSize.height / (numRows * 2 );
-    circle(grader, color, this.x, this.y)
+    circle(grader, color, this.x, this.y);
 }
 
 function computerGrade(gradeRow) {
     toBeGraded = guessMatrix[gradeRow]
     if (toBeGraded.includes('0')) {
-        alert("fail")
+        alert("fail");
     }
-
-
-
-
-
-
-    
-    return true
+    // code based on grading
+    grade.reds = 1;
+    grade.whites = 2;
 }
+
+
 function drawBoard(screenSize) {
     var skip_lines = [1, 7, 8, 10];
     for (i = 1; i < numRows; i++) {
