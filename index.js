@@ -15,6 +15,7 @@ var gradeBarWidth = sideBarWidth;
 var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
 var numRows = 11;
 var buttonSize = sideBarWidth / 3;
+var gradeButtonSize = buttonSize * 0.6;
 var verticalOffsetOfCanvas = 10;
 var color_clicked = 'black';
 //grade, guess circle radius
@@ -93,7 +94,9 @@ var grade = {
     whites: 0
 };
 
-var code = ["blue", "green", "blue", "green"]
+var code = ["blue", "green", "blue", "green"];
+
+var numPlayerGradeClicks = 0;
 
 //
 // end globals
@@ -152,8 +155,7 @@ function drawGuessButton (button, hOffset) {
 }
 
 function drawGradeButtons() {
-    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)*7;
-    hOffset += (screenSize.height * 1.5 / numRows) - (buttonSize / 2);
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)*7 + (screenSize.height * 1.5 / numRows) - (gradeButtonSize / 2);
     drawGradeButton(redGradeButton, hOffset);
     hOffset += (screenSize.height / numRows);
     drawGradeButton(whiteGradeButton, hOffset);
@@ -165,7 +167,7 @@ function drawGradeButton (button, hOffset) {
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
-    wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffset += screenSize.width - (sideBarWidth / 2) - gradeButtonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
@@ -239,10 +241,12 @@ function processClick(color) {
 }
 
 function processGradeClick(color) {
-    drawGradeCircle(numPlayerGradeClicks, element.y, color);
-    numPlayerGradeClick++;
-    if (numPlayerGradeClick > 4) {
+    numPlayerGradeClicks++;
+    if (numPlayerGradeClicks > 4) {
         alert("too many player grades entered");
+    }
+    else {
+        drawGradeCircle(numPlayerGradeClicks, element.y, color);
     }
 }
 
