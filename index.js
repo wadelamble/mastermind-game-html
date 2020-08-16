@@ -71,6 +71,12 @@ whiteGradeButton.style.backgroundColor = 'white';
 whiteGradeButton.style.border = 'white';
 whiteGradeButton.addEventListener('click', function() { whiteGradeButtonClick(); });
 
+var doneButton = document.createElement("button");
+doneButton.id = "doneButton";
+doneButton.style.backgroundColor = 'blue';
+doneButton.style.border = 'blue';
+doneButton.addEventListener('click', function() { doneButtonClick(); });
+
 var clickRound = 0;
 
 var guessMatrix =   [['0', '0', '0', '0'],
@@ -118,6 +124,7 @@ var myGameArea = {
         drawBoard(screenSize);
         drawGuessButtons();
         drawGradeButtons();
+        drawDoneButton(doneButton);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -140,6 +147,30 @@ function drawGuessButtons() {
     drawGuessButton(whiteButton, hOffset);
 }
 
+function drawGradeButtons() {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)*7 + (screenSize.height * 1.5 / numRows) - (gradeButtonSize / 2);
+    drawGradeButton(redGradeButton, hOffset);
+    hOffset += (screenSize.height / numRows);
+    drawGradeButton(whiteGradeButton, hOffset);
+}
+
+function drawDoneButton(button) {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 10 - 1;
+    button.style.position = 'absolute';
+    button.style.width = String(sideBarWidth - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var wOffset = document.getElementById("board").offsetLeft + guessBarWidth + gradeBarWidth + 1;
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = "Done";
+    button.style.color = "white";
+    document.body.appendChild(button);
+}
+
 function drawGuessButton (button, hOffset) {
     var buttonSizePx = buttonSize + 'px';
     button.style.position = 'absolute';
@@ -152,13 +183,6 @@ function drawGuessButton (button, hOffset) {
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     document.body.appendChild(button);
-}
-
-function drawGradeButtons() {
-    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)*7 + (screenSize.height * 1.5 / numRows) - (gradeButtonSize / 2);
-    drawGradeButton(redGradeButton, hOffset);
-    hOffset += (screenSize.height / numRows);
-    drawGradeButton(whiteGradeButton, hOffset);
 }
 
 function drawGradeButton (button, hOffset) {
@@ -208,6 +232,10 @@ function redGradeButtonClick () {
 function whiteGradeButtonClick () {
     processGradeClick(whiteGradeButton.style.backgroundColor);
 }
+//make func
+function doneButtonClick() {
+
+} 
 
 function processClick(color) {
     getClickIndex();
