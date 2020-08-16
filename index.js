@@ -273,7 +273,7 @@ function processGradeClick(color) {
         else if (color === "white") {
             grade.whites++;
         }
-        drawGradeCircle(numPlayerGradeClicks, element.y, color);
+        drawGradeCircle(numPlayerGradeClicks, element.y + 1, color);
     }
 }
 
