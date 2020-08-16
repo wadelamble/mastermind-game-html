@@ -100,9 +100,28 @@ var grade = {
     whites: 0
 };
 
+
 var code = ["blue", "green", "blue", "green"];
 
 var numPlayerGradeClicks = 0;
+
+colors = ["red", "blue", "green", "yellow", "purple", "white"]
+posCodes = []
+subCode = []
+for (i=0; i<6; i++) {
+    for (j=0; j<6; j++) {
+        for (k=0; k<6; k++) {
+            for (l=0; l<6; l++) {
+                subCode = [colors[i], colors[j], colors[k], colors[l]];
+                posCodes.push(subCode);
+            }
+        }
+    }
+}
+
+
+
+
 
 //
 // end globals
@@ -246,7 +265,9 @@ function processClick(color) {
     //finished a guess
     else {
         //make this the actual grade
-        computerGrade(element.y - 1);
+        gradeRow = element.y - 1
+        toBeGraded = guessMatrix[gradeRow]
+        computerGrade(toBeBraded);
         var y = element.y;
         var x = 0;
         for (i = 1; i <= grade.reds; i++) {
@@ -274,6 +295,12 @@ function processGradeClick(color) {
         alert("too many player grades entered");
     }
     else {
+        if (color === "red") {
+            grade.reds++;
+        }
+        else if (color === "white") {
+            grade.whites++;
+        }
         drawGradeCircle(numPlayerGradeClicks, element.y + 1, color);
     }
 }
@@ -336,8 +363,7 @@ function drawGradeCircle(x_loc, y_loc, color) {
     circle(grader, color, this.x, this.y);
 }
 
-function computerGrade(gradeRow) {
-    toBeGraded = guessMatrix[gradeRow]
+function computerGrade(toBeGraded) {
     if (toBeGraded.includes('0')) {
         alert("fail");
     }
@@ -363,6 +389,51 @@ function computerGrade(gradeRow) {
         guess_2.splice(0, 1);
     }
 }
+
+function removeCodes(posCodes) {
+    var newPosCodes = [];
+    for (index = 0; index < length(posCodes); index++) {
+        posCode = posCodes[index];
+        realGrade = [grade.reds, grade.whites];
+        computerGrade(posCode);
+        if ((grade.reds === realGrade[0]) && (grade.white === realGrade[1])) {
+            newPosCodes.push(posCode);
+        }
+    }
+    posCodes = newPosCodes;
+    grade.reds = realGrade[0];
+    grade.whites = realGrade[1];
+    return posCodes;
+}
+
+
+function computerGuess(gradeRow) {
+    if (guessMatrix[gradeRow] != ["0", "0", "0", "0"]) {
+        alert("fail")
+    }
+    if (gradeRow === 0) {
+        //very random, change
+        guess = ["yellow", "green", "blue", "white"]
+    }
+    else {
+        posCodes = removeCodes(posCodes)
+        //this is just picking a random one, maybe change it
+        len = length(posCodes)
+        guess = posCodes[length - 1]
+    }
+    for (index=0; index<4; index++) {
+        drawGuessCircle(index + 1, gradeRow + 1, guess[index])
+    }
+}
+//make this generate a random one
+function computerCode() {
+    code = ["yellow", "purple", "green", "green"]
+    for (index=0; index<4; index++) {
+        color = code[index]
+        drawGuessCircle(index + 1, 0, color)
+    }
+}
+
 
 
 function drawBoard(screenSize) {
@@ -405,6 +476,8 @@ function drawBoard(screenSize) {
     this.fontString = fontSize + "px Arial"
     text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
     text(this.fontString, "GRADES", guessBarWidth + gradeBarWidth * 1.5, screenSize.height - (screenSize.height * 3 / numRows) - fontSize);
+    //computerCode()
+    computerGuess(0)
 }
 
 
