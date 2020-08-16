@@ -246,7 +246,7 @@ function processGradeClick(color) {
         alert("too many player grades entered");
     }
     else {
-        drawGradeCircle(numPlayerGradeClicks, element.y, color);
+        drawGradeCircle(numPlayerGradeClicks, element.y + 1, color);
     }
 }
 
