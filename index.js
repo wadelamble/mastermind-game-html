@@ -218,8 +218,6 @@ function drawGradeButton (button, hOffset) {
     document.body.appendChild(button);
 }
 
-
-
 function redButtonClick () {
     processClick(redButton.style.backgroundColor);
 }
@@ -251,9 +249,16 @@ function redGradeButtonClick () {
 function whiteGradeButtonClick () {
     processGradeClick(whiteGradeButton.style.backgroundColor);
 }
-//make func
-function doneButtonClick() {
 
+function doneButtonClick() {
+    for (index=0; index<10; index++) {
+        row = guessMatrix[index]
+        if (row === ["0", "0", "0", "0"]) {
+            gradeRow = index;
+        }
+    }
+
+    computerGuess(gradeRow)
 } 
 
 function processClick(color) {
