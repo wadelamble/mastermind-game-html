@@ -65,7 +65,7 @@ redGradeButton.style.backgroundColor = 'red';
 redGradeButton.style.border = 'red';
 redGradeButton.addEventListener('click', function() { redGradeButtonClick(); });
 
-var whiteGradeButton = document.createElement("button");
+whiteGradeButton = document.createElement("button");
 whiteGradeButton.id = "whiteGradeButton";
 whiteGradeButton.style.backgroundColor = 'white';
 whiteGradeButton.style.border = 'white';
@@ -76,6 +76,12 @@ doneButton.id = "doneButton";
 doneButton.style.backgroundColor = 'blue';
 doneButton.style.border = 'blue';
 doneButton.addEventListener('click', function() { doneButtonClick(); });
+
+var helpButton = document.createElement("button");
+helpButton.id = "helpButton";
+helpButton.style.backgroundColor = 'green';
+helpButton.style.border = 'green';
+helpButton.addEventListener('click', function() { helpButtonClick(); });
 
 var clickRound = 0;
 
@@ -144,6 +150,7 @@ var myGameArea = {
         drawGuessButtons();
         drawGradeButtons();
         drawDoneButton(doneButton);
+        drawHelpButton(helpButton);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -186,6 +193,23 @@ function drawDoneButton(button) {
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     button.textContent = "Done";
+    button.style.color = "white";
+    document.body.appendChild(button);
+}
+
+function drawHelpButton(button) {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
+    button.style.position = 'absolute';
+    button.style.width = String(guessBarWidth + gradeBarWidth - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var wOffset = document.getElementById("board").offsetLeft;
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = "Help";
     button.style.color = "white";
     document.body.appendChild(button);
 }
@@ -263,6 +287,41 @@ function doneButtonClick() {
     }
     //alert(gradeRow)
     computerGuess(gradeRow)
+} 
+
+function helpButtonClick() {
+    /*var instructionsButton = document.createElement("button");
+    instructionsButton.id = "helpButton";
+    instructionsButton.style.backgroundColor = 'white';
+    instructionsButton.style.border = 'white';
+    helpButton.addEventListener('click', function() { helpButtonClick(); });
+
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
+    instructionsButton.style.position = 'absolute';
+    instructionsButton.style.width = String(guessBarWidth + gradeBarWidth - 1) + "px";
+    instructionsButton.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    instructionsButton.style.borderRadius = "0px";
+    var wOffset = document.getElementById("board").offsetLeft;
+    //wOffset += screenSize.width - (sideBarWidth / 2) - instructionsButtonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    instructionsButton.style.top = hOffsetStr;
+    instructionsButton.style.left = wOffsetStr;
+    instructionsButton.textContent = "Just do it";
+    instructionsButton.style.color = "black";
+    document.body.appendChild(instructionsButton);
+    //instructionsButton.addEventListener('click', function() { helpButtonClick(); });
+        
+    //textBlock.innerText = "Help";
+    //document.body.appendChild(textBlock);*/
+    var msg = "Welcome to the Internet's first ever version of the classic board game Mastermind.\n\n";
+    msg += "The goal of the game is to guess the secret code.\n\n";
+    msg += "There are two modes to play: Be the code-breaker and the computer grades you, or grade the computer's code breaking.\n\n";
+    msg += "A red grade peg indicates that a code peg is the correct color in the correct position,";
+    msg += " while a white grade peg indicates that a code peg is the correct color, but in the incorrect position.\n";
+
+    alert(msg);
+
 } 
 
 function processClick(color) {
@@ -431,10 +490,6 @@ function removeCodes(posCodes, prevGuess) {
 
 
 function computerGuess(gradeRow) {
-    //if (guessMatrix[gradeRow] != ['0','0', '0', '0']) {
-    //    //alert("fail")
-    //    //saalert(guessMatrix[gradeRow])
-    //}
     if (gradeRow === 0) {
         //very random, change
         guess = ["yellow", "green", "blue", "white"]
