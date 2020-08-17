@@ -83,6 +83,19 @@ helpButton.style.backgroundColor = 'green';
 helpButton.style.border = 'green';
 helpButton.addEventListener('click', function() { helpButtonClick(); });
 
+var modeButton = document.createElement("button");
+modeButton.id = "modeButton";
+modeButton.style.backgroundColor = 'black';
+modeButton.style.border = 'black';
+modeButton.addEventListener('click', function() { modeButtonClick(); });
+
+var mode = {
+    codeBreaker: 'CodeBreaker',
+    codeMaker: 'CodeMaker',
+    value: 'CodeBreaker'
+};
+
+
 var clickRound = 0;
 
 var guessMatrix =   [['0', '0', '0', '0'],
@@ -151,6 +164,7 @@ var myGameArea = {
         drawGradeButtons();
         drawDoneButton(doneButton);
         drawHelpButton(helpButton);
+        drawModeButton(modeButton);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -211,6 +225,23 @@ function drawHelpButton(button) {
     button.style.left = wOffsetStr;
     button.textContent = "Help";
     button.style.color = "white";
+    document.body.appendChild(button);
+}
+
+function drawModeButton(button) {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
+    button.style.position = 'absolute';
+    button.style.width = String(sideBarWidth - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var wOffset = document.getElementById("board").offsetLeft + guessBarWidth + gradeBarWidth + 1;
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = mode.value;
+    button.style.color = "yellow";
     document.body.appendChild(button);
 }
 
@@ -284,6 +315,19 @@ function doneButtonClick() {
 
     computerGuess(gradeRow)
 } 
+
+function modeButtonClick() {
+    if (mode.value === mode.codeBreaker) {
+        mode.value = mode.codeMaker;
+    }
+    else {
+        mode.value = mode.codeBreaker;
+    }
+    document.getElementById("modeButton").textContent = mode.value;
+
+    // call main game flow
+} 
+
 
 function helpButtonClick() {
     /*var instructionsButton = document.createElement("button");
