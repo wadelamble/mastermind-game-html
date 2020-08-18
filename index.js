@@ -165,6 +165,9 @@ var myGameArea = {
         drawDoneButton(doneButton);
         drawHelpButton(helpButton);
         drawModeButton(modeButton);
+        if (mode.value === mode.codeBreaker) {
+            computerCode();
+        }
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -190,7 +193,9 @@ var myGameArea = {
                              ['0', '0', '0', '0'],
                              ['0', '0', '0', '0'],
                              ['0', '0', '0', '0']];
-            }
+        
+        temp = 0
+    }
         
 
 }
@@ -353,6 +358,10 @@ function modeButtonClick() {
     }
     document.getElementById("modeButton").textContent = mode.value;
     myGameArea.reset();
+    if (mode.value === mode.codeBreaker) {
+        computerCode();
+    }
+
 } 
 
 
