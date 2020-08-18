@@ -120,7 +120,7 @@ var grade = {
 };
 
 
-var code = ["blue", "green", "blue", "green"];
+var code = [];
 
 var numPlayerGradeClicks = 0;
 
@@ -564,10 +564,14 @@ function computerGuess(gradeRow) {
 }
 //make this generate a random one
 function computerCode() {
-    code = ["yellow", "purple", "green", "green"]
+    for (i=0; i<4; i++) {
+        code.push(colors[Math.floor(Math.random() * 6)]);
+    }
+    //this displays it, which... it definitely shouldn't, 
+    //but lets leave it here while we are still working
     for (index=0; index<4; index++) {
-        color = code[index]
-        drawGuessCircle(index + 1, 0, color)
+        color = code[index];
+        drawGuessCircle(index + 1, 0, color);
     }
 }
 
@@ -613,8 +617,8 @@ function drawBoard(screenSize) {
     this.fontString = fontSize + "px Arial"
     text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
     text(this.fontString, "GRADES", guessBarWidth + gradeBarWidth * 1.5, screenSize.height - (screenSize.height * 3 / numRows) - fontSize);
-    //computerCode()
-    computerGuess(0)
+    computerCode();
+    //computerGuess(0)
 }
 
 
