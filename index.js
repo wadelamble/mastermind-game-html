@@ -168,7 +168,31 @@ var myGameArea = {
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+    },
+    reset: function() {
+        this.start();
+
+        // set state variables. this is super unacceptable
+        grade.reds = 0;
+        grade.whites = 0;
+        element.x = 0;
+        element.y = 0;
+
+        clickRound = 0;
+
+        guessMatrix =   [['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0'],
+                             ['0', '0', '0', '0']];
+            }
+        
+
 }
 
 function drawGuessButtons() {
@@ -328,9 +352,7 @@ function modeButtonClick() {
         mode.value = mode.codeBreaker;
     }
     document.getElementById("modeButton").textContent = mode.value;
-
-    // call main game flow
-    // or just do nothing - how about that?
+    myGameArea.reset();
 } 
 
 
