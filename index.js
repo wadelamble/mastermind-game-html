@@ -330,6 +330,7 @@ function modeButtonClick() {
     document.getElementById("modeButton").textContent = mode.value;
 
     // call main game flow
+    // or just do nothing - how about that?
 } 
 
 
@@ -369,35 +370,40 @@ function helpButtonClick() {
 } 
 
 function processClick(color) {
-    getClickIndex();
-    drawGuessCircle(element.x, element.y, color);
-    guessMatrix[element.y - 1][element.x - 1] = color;
-    if (element.x < 4) {
+    if (mode.value === mode.codeBreaker) {
+        getClickIndex();
+        drawGuessCircle(element.x, element.y, color);
+        guessMatrix[element.y - 1][element.x - 1] = color;
+        if (element.x < 4) {
+        }
+        //finished a guess
+        else {
+            //make this the actual grade
+            gradeRow = element.y - 1
+            toBeGraded = guessMatrix[gradeRow]
+            computerGrade(toBeGraded, code);
+            var y = element.y;
+            var x = 0;
+            for (i = 1; i <= grade.reds; i++) {
+                x++;
+                drawGradeCircle(x, y, "red");
+            }
+            for (i = 1; i <= grade.whites; i++) {
+                x++;
+                drawGradeCircle(x, y, "white");
+            }
+            
+            if (grade.reds === 4) {
+                alert("YAY YOU WON");
+            }
+            else if (element.y === 10) {
+                    //PLAY A LOSE SCREEN HERE
+                    alert("U A LOSER");
+            }
+        }
     }
-    //finished a guess
     else {
-        //make this the actual grade
-        gradeRow = element.y - 1
-        toBeGraded = guessMatrix[gradeRow]
-        computerGrade(toBeGraded, code);
-        var y = element.y;
-        var x = 0;
-        for (i = 1; i <= grade.reds; i++) {
-            x++;
-            drawGradeCircle(x, y, "red");
-        }
-        for (i = 1; i <= grade.whites; i++) {
-            x++;
-            drawGradeCircle(x, y, "white");
-        }
-        
-        if (grade.reds === 4) {
-            alert("YAY YOU WON");
-        }
-        else if (element.y === 10) {
-                //PLAY A LOSE SCREEN HERE
-                alert("U A LOSER");
-        }
+        alert("not so fast, missy mass");
     }
 }
 
