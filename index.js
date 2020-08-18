@@ -138,7 +138,7 @@ for (i=0; i<6; i++) {
     }
 }
 
-
+var temp = 0
 
 
 
@@ -403,7 +403,16 @@ function processClick(color) {
         }
     }
     else {
+        if (temp < 4) {
+            temp += 1
+            drawGuessCircle(temp, 0, color);
+            if (temp === 4) {
+                computerGuess(0)
+            }
+        }
+        else {
         alert("not so fast, missy mass");
+        }
     }
 }
 
@@ -544,14 +553,18 @@ function computerGuess(gradeRow) {
         //very random, change
         guess = ["yellow", "green", "blue", "white"]
     }
+    else if (grade.reds === 4) {
+        alert("Computer Wins!!!")
+        //end program
+        //idk how...
+        //dad's reset func?
+    }
     else {
         //alert("here")
-        console.log("hi")
-        console.table(posCodes)
         //alert(guessMatrix[gradeRow - 1])
-        alert(grade.reds + "," + grade.whites);
+        //alert(grade.reds + "," + grade.whites);
         posCodes = removeCodes(posCodes, guessMatrix[gradeRow - 1])
-        alert(grade.reds + "," + grade.whites);
+        //alert(grade.reds + "," + grade.whites);
         //alert(posCodes)
         //this is just picking a random one, maybe change it
         len = posCodes.length;
@@ -623,7 +636,7 @@ function drawBoard(screenSize) {
     this.fontString = fontSize + "px Arial"
     text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
     text(this.fontString, "GRADES", guessBarWidth + gradeBarWidth * 1.5, screenSize.height - (screenSize.height * 3 / numRows) - fontSize);
-    computerCode();
+    //computerCode();
     //computerGuess(0)
 }
 
