@@ -2,11 +2,10 @@
 // Globals -- eek so many, what's the right pattern here?
 //
 var myGamePiece;
-var sizeRatio = 4/4;
-var sizeScaler = 440;
 const screenSize = {
-    height : sizeRatio * sizeScaler,
-    width : sizeScaler
+    //the 300 accounts for the taskbar, tabs, and search bar
+    height : screen.height - 300,
+    width : screen.height - 300
 };
 
 var sideBarWidth = screenSize.width / 5;
@@ -15,6 +14,13 @@ var gradeBarWidth = sideBarWidth;
 var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
 var numRows = 11;
 var buttonSize = sideBarWidth / 3;
+//this is only useful if it isn't a square
+/*
+if (buttonSize > ((screenSize.height / numRows) * 0.75)) {
+    alert("hi")
+    buttonSize = ((screenSize.height / numRows) * 0.75)
+}
+*/
 var gradeButtonSize = buttonSize * 0.6;
 var verticalOffsetOfCanvas = 10;
 var color_clicked = 'black';
@@ -82,6 +88,19 @@ helpButton.id = "helpButton";
 helpButton.style.backgroundColor = 'green';
 helpButton.style.border = 'green';
 helpButton.addEventListener('click', function() { helpButtonClick(); });
+
+var backButton = document.createElement("button");
+backButton.id = "backButton";
+backButton.style.backgroundColor = 'blue';
+backButton.style.border = 'blue';
+backButton.addEventListener('click', function() { backButtonClick(); });
+
+var resetButton = document.createElement("button");
+resetButton.id = "resetButton";
+resetButton.style.backgroundColor = 'red';
+resetButton.style.border = 'red';
+resetButton.addEventListener('click', function() { resetButtonClick(); });
+
 
 var modeButton = document.createElement("button");
 modeButton.id = "modeButton";
@@ -164,6 +183,8 @@ var myGameArea = {
         drawGradeButtons();
         drawDoneButton(doneButton);
         drawHelpButton(helpButton);
+        drawBackButton(backButton);
+        drawResetButton(resetButton);
         drawModeButton(modeButton);
         if (mode.value === mode.codeBreaker) {
             computerCode();
@@ -194,8 +215,25 @@ var myGameArea = {
                              ['0', '0', '0', '0'],
                              ['0', '0', '0', '0']];
         
-        temp = 0
+        temp = 0;
+    },
+    //this is only for guessing. sorry :(
+    back: function() {
+        guessMatrix[element.y - 1][element.x - 1] = '0'
+
+        drawGuessCircle(element.x, element.y, "black")
+        if (element.x == 1) {
+            element.x = 4;
+            element.y -= 1
+        }
+        else {
+            element.x -= 1
+        }
+
+        
+
     }
+
         
 
 }
@@ -243,16 +281,57 @@ function drawDoneButton(button) {
 function drawHelpButton(button) {
     var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
     button.style.position = 'absolute';
-    button.style.width = String(guessBarWidth + gradeBarWidth - 1) + "px";
+    button.style.width = String(((guessBarWidth + gradeBarWidth) / 3) - 1) + "px";
     button.style.height = String((screenSize.height / numRows) - 1) + "px ";
     button.style.borderRadius = "0px";
     var wOffset = document.getElementById("board").offsetLeft;
+    alert((guessBarWidth + gradeBarWidth) / 3)
     //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     button.textContent = "Help";
+    button.style.color = "white";
+    document.body.appendChild(button);
+}
+
+function drawBackButton(button) {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
+    button.style.position = 'absolute';
+    button.style.width = String(((guessBarWidth + gradeBarWidth) / 3) - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var baseWidth = document.getElementById("board").offsetLeft;
+    var addedWidth = (guessBarWidth + gradeBarWidth) / 3;
+    var wOffset = baseWidth + addedWidth;
+    alert(addedWidth)
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = "Back";
+    button.style.color = "white";
+    document.body.appendChild(button);
+}
+
+function drawResetButton(button) {
+    var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 11 - 1;
+    button.style.position = 'absolute';
+    button.style.width = String(((guessBarWidth + gradeBarWidth) / 3) - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var baseWidth = document.getElementById("board").offsetLeft;
+    var addedWidth = ((guessBarWidth + gradeBarWidth) / 3);
+    var wOffset = baseWidth + addedWidth * 2 + 1
+    alert(addedWidth)
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = "Reset";
     button.style.color = "white";
     document.body.appendChild(button);
 }
@@ -400,6 +479,21 @@ function helpButtonClick() {
 
 } 
 
+function backButtonClick() {
+    if (mode.value == mode.codeMaker) {
+        alert("sorry, you can\'t go back when you are the codeMaker. Coming soon, maybe...?...");
+    }
+    else {
+        myGameArea.back()
+    }
+}
+
+function resetButtonClick() {
+    myGameArea.reset()
+}
+
+
+
 function processClick(color) {
     if (mode.value === mode.codeBreaker) {
         getClickIndex();
@@ -442,24 +536,30 @@ function processClick(color) {
             }
         }
         else {
-        alert("not so fast, missy mass");
+            alert("You are the code maker, you can't try to crack your own code.");
         }
     }
 }
 
 function processGradeClick(color) {
-    numPlayerGradeClicks++;
-    if (numPlayerGradeClicks > 4) {
-        alert("too many player grades entered");
+    if (modeButton.value = modeButton.codeMaker) {
+        numPlayerGradeClicks++;
+        if (numPlayerGradeClicks > 4) {
+            alert("too many player grades entered");
+        }
+        else {
+            if (color === "red") {
+                grade.reds++;
+            }
+            else if (color === "white") {
+                grade.whites++;
+            }
+            drawGradeCircle(numPlayerGradeClicks, element.y, color);
+        }
     }
     else {
-        if (color === "red") {
-            grade.reds++;
-        }
-        else if (color === "white") {
-            grade.whites++;
-        }
-        drawGradeCircle(numPlayerGradeClicks, element.y, color);
+        myGameArea.back();
+        alert("You are the code breaker, you can't grade your own guess.");
     }
 }
 
@@ -599,6 +699,9 @@ function computerGuess(gradeRow) {
         //alert(posCodes)
         //this is just picking a random one, maybe change it
         len = posCodes.length;
+        if (len === 0) {
+            alert("hmm. check your work...")
+        }
         guess = posCodes[len - 1]
     }
     //alert("drawing...")
@@ -614,15 +717,19 @@ function computerGuess(gradeRow) {
 }
 //make this generate a random one
 function computerCode() {
+    code = []
+    //alert()
     for (i=0; i<4; i++) {
         code.push(colors[Math.floor(Math.random() * 6)]);
     }
     //this displays it, which... it definitely shouldn't, 
     //but lets leave it here while we are still working
+    /*
     for (index=0; index<4; index++) {
         color = code[index];
         drawGuessCircle(index + 1, 0, color);
     }
+    */
 }
 
 
