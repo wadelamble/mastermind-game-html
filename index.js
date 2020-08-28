@@ -159,7 +159,20 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
-
+if (!localStorage.getItem("highScore")) {
+    var newUser = true;
+    helpButtonClick;
+    localStorage.setItem("highScore", "10");
+    localStorage.setItem("gamesPlayed", "0");
+    localStorage.setItem("gamesWon", "0");
+    localStorage.setItem("winRate", "0%");
+    localStorage.setItem("averageTries", "10");
+}
+else {
+    var newUser = false
+    alert("Welcome back!")
+    //show stats here
+}
 
 //
 // end globals
@@ -285,7 +298,7 @@ function drawHelpButton(button) {
     button.style.height = String((screenSize.height / numRows) - 1) + "px ";
     button.style.borderRadius = "0px";
     var wOffset = document.getElementById("board").offsetLeft;
-    alert((guessBarWidth + gradeBarWidth) / 3)
+    //alert((guessBarWidth + gradeBarWidth) / 3)
     //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
@@ -305,7 +318,7 @@ function drawBackButton(button) {
     var baseWidth = document.getElementById("board").offsetLeft;
     var addedWidth = (guessBarWidth + gradeBarWidth) / 3;
     var wOffset = baseWidth + addedWidth;
-    alert(addedWidth)
+    //alert(addedWidth)
     //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
@@ -325,7 +338,7 @@ function drawResetButton(button) {
     var baseWidth = document.getElementById("board").offsetLeft;
     var addedWidth = ((guessBarWidth + gradeBarWidth) / 3);
     var wOffset = baseWidth + addedWidth * 2 + 1
-    alert(addedWidth)
+    //alert(addedWidth)
     //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
@@ -353,7 +366,7 @@ function drawModeButton(button) {
     document.body.appendChild(button);
 }
 
-function drawGuessButton (button, hOffset) {
+function drawGuessButton(button, hOffset) {
     var buttonSizePx = buttonSize + 'px';
     button.style.position = 'absolute';
     button.style.width = buttonSizePx;
@@ -471,9 +484,10 @@ function helpButtonClick() {
     //document.body.appendChild(textBlock);*/
     var msg = "Welcome to the Internet's first ever version of the classic board game Mastermind.\n\n";
     msg += "The goal of the game is to guess the secret code.\n\n";
-    msg += "There are two modes to play: Be the code-breaker and the computer grades you, or grade the computer's code breaking.\n\n";
+    msg += "There are two modes to play: Be the code-breaker and the computer grades you, or create your own code, and grade the computer's guesses.\n\n";
     msg += "A red grade peg indicates that a code peg is the correct color in the correct position,";
     msg += " while a white grade peg indicates that a code peg is the correct color, but in the incorrect position.\n";
+    msg += "Toggle between game modes by clicking the indicator in the lower right corner. This will reset the game.\n"
 
     alert(msg);
 
@@ -519,11 +533,39 @@ function processClick(color) {
             }
             
             if (grade.reds === 4) {
-                alert("YAY YOU WON");
+                setStats(true, element.y);
+                winScreen();
+                setTimeout(function() {
+                    msg = "Congratulations, you won! \n";
+                    //setting the high score
+                    if (element.y < Number(localStorage.getItem("highScore"))) {
+                        localStorage.setItem("highScore", String(element.y))
+                        msg += "New high score: " + localStorage.getItem("highScore") + "! \n"
+                    }
+                    msg += "Play again?"
+                    
+                    for (j=0; j<4; j++) {
+                        drawGuessCircle(j + 1, 0, code[j]);
+                    }
+
+                    if (confirm(msg)) {
+                        myGameArea.reset();
+                    }
+                    else {
+                        //should we leave it how it is, or go to the main menu?
+                        //i think main menu
+                    }
+
+                }, 2000);
+
+                
             }
             else if (element.y === 10) {
-                    //PLAY A LOSE SCREEN HERE
-                    alert("U A LOSER");
+                setStats(false, 10);
+                loseScreen();
+                setTimeout(function() {
+                    alert("Nice try :(");
+                }, 1500)
             }
         }
     }
@@ -621,6 +663,85 @@ function drawGradeCircle(x_loc, y_loc, color) {
     circle(grader, color, this.x, this.y);
 }
 
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
+}
+
+function winScreen() {
+    var mode = 0
+    var flashing = setInterval(flash, 100)
+
+    function flash() {
+        mode++;
+        if (mode % 2 == 1) {
+            for (j=0; j<4; j++) {
+                drawGuessCircle(j + 1, 0, code[j]);
+            }
+        }
+        else {
+            for (j=0; j<4; j++) {
+                drawGuessCircle(j + 1, 0, "black");
+            }
+        }
+        if (mode == 20) {
+            clearInterval(flashing)
+        }
+    }
+}
+
+function loseScreen() {
+    var count = 0;
+    var flashing = setInterval(change, 200);
+
+    function change() {
+        count++;
+        if (count == 5) {
+            clearInterval(flashing)
+        }
+        
+        else {
+            for (j=0; j<4; j++) {
+                color = colors[Math.floor(Math.random() * 6)];
+                drawGuessCircle(j + 1, 0, color);
+            }
+        }
+        
+    }
+    //alert("real code now...")
+    //alert(code)
+    setTimeout(function() {
+        for (j=0; j<4; j++) {
+            drawGuessCircle(j + 1, 0, code[j]);
+        }
+    }, 1000)
+    //alert("drew real code")
+}
+
+function setStats(won, score) {
+    currentGP = Number(localStorage.getItem("gamesPlayed"))
+    newGP = currentGp + 1
+    localStorage.setItem("gamesPlayed", String(newGp))
+    if (won) {
+        currentGW = Number(localStorage.getItem("gamesWon"))
+        newGW = currentGW + 1
+        localStorage.setItem("gamesWon", String(newGW))
+    }
+    newWR = String(Math.float(newGW / newGP)) + "%"
+    localStorage.setItem("winRate", String(newWR))
+    currentAT = Number(localStorage.getItem("averageTries"))
+    currentTotalPoints = currentAT * newGP
+    newTotalPoints = currentTotalPoints + score
+    newAT = newTotalPoints / newGP
+    localStorage.setItem("averageTries", String(newAT))
+
+}
+
+
 function computerGrade(toBeGraded, code) {
     if (toBeGraded.includes('0')) {
         alert("fail");
@@ -715,7 +836,7 @@ function computerGuess(gradeRow) {
     grade.reds = 0;
     grade.whites = 0;
 }
-//make this generate a random one
+
 function computerCode() {
     code = []
     //alert()
