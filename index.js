@@ -167,10 +167,13 @@ if (!localStorage.getItem("highScore")) {
     localStorage.setItem("gamesWon", "0");
     localStorage.setItem("winRate", "0%");
     localStorage.setItem("averageTries", "10");
+    localStorage.setItem("timesVisited", "1");
 }
 else {
     var newUser = false
     alert("Welcome back!")
+    currentTV = Number(localStorage.getItem("timesVisited"))
+    localStorage.setItem("timesVisited", String(currentTV + 1));
     //show stats here
 }
 
@@ -207,6 +210,7 @@ var myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     reset: function() {
+        this.resetStats();
         this.start();
 
         // set state variables. this is super unacceptable
@@ -230,21 +234,56 @@ var myGameArea = {
         
         temp = 0;
     },
-    //this is only for guessing. sorry :(
-    back: function() {
-        guessMatrix[element.y - 1][element.x - 1] = '0'
 
-        drawGuessCircle(element.x, element.y, "black")
-        if (element.x == 1) {
-            element.x = 4;
-            element.y -= 1
+    backCB: function() {
+        if (!element.x === 4) {
+            guessMatrix[element.y - 1][element.x - 1] = '0'
+
+            drawGuessCircle(element.x, element.y, "black")
+            if (element.x == 1) {
+                element.x = 4;
+                element.y -= 1;
+            }
+            else {
+                element.x -= 1;
+            }
+        }
+    },
+
+    backCM: function(grading) {
+        if (grading) {
+            for (i=0; i<4; i++) {
+                drawGradeCircle(i+1, element.y, "black");
+            }
+            grade.reds = 0
+            grade.whites = 0
         }
         else {
-            element.x -= 1
+            drawGuessCircle(temp, 0, "black")
+            temp -= 1
+            code.pop()
+            alert(temp)
+            if (temp === 3) {
+
+                for (i=0; i<4; i++) {
+                    drawGuessCircle(i+1, 1, "black")
+                    guessMatrix[0] = ['0', '0', '0', '0']
+                    element.x = 1
+                    element.y = 1
+
+                }
+            }
         }
-
-        
-
+    },
+    resetStats: function() {
+        if (confirm("Are you sure you want to reset your statistics?")) {
+            localStorage.setItem("highScore", "10");
+            localStorage.setItem("gamesPlayed", "0");
+            localStorage.setItem("gamesWon", "0");
+            localStorage.setItem("winRate", "0%");
+            localStorage.setItem("averageTries", "10");
+            localStorage.setItem("timesVisited", "1");
+        }
     }
 
         
@@ -427,17 +466,27 @@ function whiteGradeButtonClick () {
 }
 
 function doneButtonClick() {
-    for (index=0; index<10; index++) {
-        row = guessMatrix[index]
-        //alert(row)
-        if (row.includes('0')) {
-            gradeRow = index;
-            //alert("breaking")
-            break;
-        //alert(gradeRow)
+    if (mode.value == mode.codeMaker && code != []) {
+        for (index=0; index<10; index++) {
+            row = guessMatrix[index]
+            //alert(row)
+            if (row.includes('0')) {
+                gradeRow = index;
+                //alert("breaking")
+                break;
+            //alert(gradeRow)
+            }
         }
     }
     //alert(gradeRow)
+    realGrade = [grade.reds, grade.whites]
+    computerGrade(guessMatrix[gradeRow - 1])
+    if ((grade.reds != realGrade[0]) || (grade.whites != realGrade[1])) {
+        alert("hmm. check your work...")
+        grade.reds = realGrade[0]
+        grade.whites = realGrade[1]
+    }
+    
     computerGuess(gradeRow)
 } 
 
@@ -495,10 +544,10 @@ function helpButtonClick() {
 
 function backButtonClick() {
     if (mode.value == mode.codeMaker) {
-        alert("sorry, you can\'t go back when you are the codeMaker. Coming soon, maybe...?...");
+        myGameArea.backCM();
     }
     else {
-        myGameArea.back()
+        myGameArea.backCB()
     }
 }
 
@@ -573,6 +622,7 @@ function processClick(color) {
         if (temp < 4) {
             temp += 1
             drawGuessCircle(temp, 0, color);
+            code.push(color)
             if (temp === 4) {
                 computerGuess(0)
             }
@@ -584,7 +634,7 @@ function processClick(color) {
 }
 
 function processGradeClick(color) {
-    if (modeButton.value = modeButton.codeMaker) {
+    if (mode.value = mode.codeMaker) {
         numPlayerGradeClicks++;
         if (numPlayerGradeClicks > 4) {
             alert("too many player grades entered");
@@ -600,7 +650,6 @@ function processGradeClick(color) {
         }
     }
     else {
-        myGameArea.back();
         alert("You are the code breaker, you can't grade your own guess.");
     }
 }
