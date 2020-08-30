@@ -3,14 +3,23 @@
 //
 var myGamePiece;
 
-const screenSize = {
-    //the 300 accounts for the taskbar, tabs, and search bar
+/*const screenSize = {
     height : 0.6 * screen.height,
     width : 0.6 * screen.height
+};*/
+
+const screenSize = {
+    height : 0.85 * window.innerHeight,
+    width : 0.9 * window.innerWidth
 };
 
-if (screen.height > screen.width) {
-    screenSize.width = screen.width;
+var setGameBoardMarginToZero = false;
+// never wider than square
+if (screenSize.height < screenSize.width) {
+    screenSize.width = screenSize.height;
+}
+else {
+    setGameBoardMarginToZero = true;
 }
 
 var sideBarWidth = screenSize.width / 5;
@@ -193,15 +202,16 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        if (screen.height > screen.width) {
-            this.canvas.style.marginLeft = "0px";
-        }
-        else {
-            this.canvas.style.marginLeft = String(screen.width / 4) + "px";
-        }
         this.canvas.setAttribute('id', 'board');
         this.canvas.height = screenSize.height;
         this.canvas.width = screenSize.width;
+        // i.e., on a phone
+        if (setGameBoardMarginToZero) {
+            this.canvas.style.marginLeft = "0px";
+        }
+        else {
+            this.canvas.style.marginLeft = String((window.innerWidth - this.canvas.width) / 2) + "px";
+        }
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
@@ -707,8 +717,7 @@ function text(font, text, x, y) {
     ctx.font = font;
     ctx.textAlign = "center";
     ctx.fillStyle = "white"
-    ctx.fillText(text, x, y);
-    //ctx.fillText(text, x-50, y+50);
+    ctx.fillText(text, x, y, 0.8 * sideBarWidth);
 }
 
 function drawGuessCircle(x_loc, y_loc, color) {
