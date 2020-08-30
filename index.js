@@ -46,73 +46,67 @@ var guess_loc = [1, 1];
 var redButton = document.createElement("button");
 redButton.id = "redButton";
 redButton.style.backgroundColor = 'red';
-redButton.style.border = 'red';
 redButton.addEventListener('click', function() { redButtonClick(); });
 
 var blueButton = document.createElement("button");
 blueButton.id = "blueButton";
 blueButton.style.backgroundColor = 'blue';
-blueButton.style.border = 'blue';
 blueButton.addEventListener('click', function() { blueButtonClick(); });
 
 var greenButton = document.createElement("button");
 greenButton.id = "greenButton";
 greenButton.style.backgroundColor = 'green';
-greenButton.style.border = 'green';
 greenButton.addEventListener('click', function() { greenButtonClick(); });
 
 var yellowButton = document.createElement("button");
 yellowButton.id = "yellowButton";
 yellowButton.style.backgroundColor = 'yellow';
-yellowButton.style.border = 'yellow';
 yellowButton.addEventListener('click', function() { yellowButtonClick(); });
 
 var purpleButton = document.createElement("button");
 purpleButton.id = "purpleButton";
 purpleButton.style.backgroundColor = 'purple';
-purpleButton.style.border = 'purple';
 purpleButton.addEventListener('click', function() { purpleButtonClick(); });
 
 var whiteButton = document.createElement("button");
 whiteButton.id = "whiteButton";
 whiteButton.style.backgroundColor = 'white';
-whiteButton.style.border = 'white';
 whiteButton.addEventListener('click', function() { whiteButtonClick(); });
 
 var redGradeButton = document.createElement("button");
 redGradeButton.id = "redGradeButton";
 redGradeButton.style.backgroundColor = 'red';
-redGradeButton.style.border = 'red';
 redGradeButton.addEventListener('click', function() { redGradeButtonClick(); });
 
 whiteGradeButton = document.createElement("button");
 whiteGradeButton.id = "whiteGradeButton";
 whiteGradeButton.style.backgroundColor = 'white';
-whiteGradeButton.style.border = 'white';
 whiteGradeButton.addEventListener('click', function() { whiteGradeButtonClick(); });
+
+var mainButton = document.createElement("button");
+mainButton.id = "mainButton";
+mainButton.style.backgroundColor = 'purple';
+mainButton.addEventListener('click', function() { mainButtonClick(); });
+
 
 var doneButton = document.createElement("button");
 doneButton.id = "doneButton";
 doneButton.style.backgroundColor = 'blue';
-doneButton.style.border = 'blue';
 doneButton.addEventListener('click', function() { doneButtonClick(); });
 
 var helpButton = document.createElement("button");
 helpButton.id = "helpButton";
-helpButton.style.backgroundColor = 'green';
-helpButton.style.border = 'green';
+helpButton.style.backgroundColor = 'purple';
 helpButton.addEventListener('click', function() { helpButtonClick(); });
 
 var backButton = document.createElement("button");
 backButton.id = "backButton";
 backButton.style.backgroundColor = 'blue';
-backButton.style.border = 'blue';
 backButton.addEventListener('click', function() { backButtonClick(); });
 
 var resetButton = document.createElement("button");
 resetButton.id = "resetButton";
-resetButton.style.backgroundColor = 'red';
-resetButton.style.border = 'red';
+resetButton.style.backgroundColor = 'grey';
 resetButton.addEventListener('click', function() { resetButtonClick(); });
 
 
@@ -248,6 +242,7 @@ var myGameArea = {
         drawBackButton(backButton);
         drawResetButton(resetButton);
         drawModeButton(modeButton);
+        drawMainButton(mainButton);
         if (mode.value === mode.codeBreaker) {
             computerCode();
         }
@@ -373,6 +368,24 @@ function drawGradeButtons() {
     drawGradeButton(whiteGradeButton, hOffset);
 }
 
+function drawMainButton(button) {
+    var hOffset = verticalOffsetOfCanvas;
+    button.style.position = 'absolute';
+    button.style.width = String(sideBarWidth - 1) + "px";
+    button.style.height = String((screenSize.height / numRows) - 1) + "px ";
+    button.style.borderRadius = "0px";
+    var wOffset = document.getElementById("board").offsetLeft + guessBarWidth + 1;
+    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
+    wOffsetStr = wOffset + 'px';
+    hOffsetStr = hOffset + 'px';
+    button.style.top = hOffsetStr;
+    button.style.left = wOffsetStr;
+    button.textContent = "Main Menu";
+    //button.style.textAlign = "center";
+    //button.style.fontSize = '13px';
+    button.style.color = "white";
+    document.body.appendChild(button);
+}
 function drawDoneButton(button) {
     var hOffset = verticalOffsetOfCanvas + (screenSize.height / numRows)* 10 - 1;
     button.style.position = 'absolute';
@@ -463,7 +476,7 @@ function drawModeButton(button) {
     button.textContent = mode.value;
     //button.style.textAlign = "center";
     //button.style.fontSize = '13px';
-    button.style.color = "yellow";
+    button.style.color = "grey";
     document.body.appendChild(button);
 }
 
@@ -527,6 +540,10 @@ function redGradeButtonClick () {
 
 function whiteGradeButtonClick () {
     processGradeClick(whiteGradeButton.style.backgroundColor);
+}
+
+function mainButtonClick() {
+    window.location.href = "index.html";
 }
 
 function doneButtonClick() {
