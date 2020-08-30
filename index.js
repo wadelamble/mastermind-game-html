@@ -157,6 +157,8 @@ var code = [];
 
 var numPlayerGradeClicks = 0;
 
+var gradeRow = 0;
+
 colors = ["red", "blue", "green", "yellow", "purple", "white"]
 posCodes = []
 subCode = []
@@ -172,9 +174,6 @@ for (i=0; i<6; i++) {
 }
 
 var temp = 0
-
-
-
 
 if (!localStorage.getItem("test2")) {
     localStorage.setItem("test2", "forchecking") 
@@ -261,10 +260,6 @@ var myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     reset: function() {
-        //delete this its for testing
-        //this.resetStats();
-        this.start();
-
         // set state variables. this is super unacceptable
         grade.reds = 0;
         grade.whites = 0;
@@ -284,7 +279,11 @@ var myGameArea = {
                              ['0', '0', '0', '0'],
                              ['0', '0', '0', '0']];
         
-        temp = 0;
+        temp = 0;        
+        code = [];
+        gradeRow = 0
+
+        this.start();
     },
 
     backCB: function() {
@@ -549,7 +548,7 @@ function doneButtonClick() {
     }
     //alert(gradeRow)
     realGrade = [grade.reds, grade.whites]
-    computerGrade(guessMatrix[gradeRow - 1])
+    computerGrade(guessMatrix[gradeRow - 1], code)
     if ((grade.reds != realGrade[0]) || (grade.whites != realGrade[1])) {
         alert("hmm. check your work...")
         grade.reds = realGrade[0]
@@ -969,7 +968,10 @@ function computerGuess(gradeRow) {
         guess = ["yellow", "green", "blue", "white"]
     }
     else if (grade.reds === 4) {
-        alert("Computer Wins!!!")
+        alert("Computer Wins!!!");
+        myGameArea.reset();
+        return;
+        
         //end program
         //idk how...
         //dad's reset func?
