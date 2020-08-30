@@ -598,7 +598,7 @@ function helpButtonClick() {
     var msg = "Welcome to Mastermind. ";
     msg += "Attempt to guess the secret code or create a secret code for the computer to guess.\n\n";
     msg += "To guess or grade, use the buttons on the right-hand side of the game board. ";
-    msg += "To change play mode, click the yellow \"Maker/Breaker\" button in the lower right corner.\n";
+    msg += "To change play mode, click the \"Maker/Breaker\" button in the lower right corner of the game board.\n";
     msg += "A red grade peg indicates that a guess is the correct color in the correct position. ";
     msg += "A white grade peg indicates that a guess is the correct color, but in the incorrect position. ";
 
