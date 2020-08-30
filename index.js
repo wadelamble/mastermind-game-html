@@ -173,19 +173,28 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
+var userStats = {
+    timesVisited: 0,
+    gamesPlayed: 0,
+    gamesWon: 0,
+    averageTries: 0,
+    winRate: 0,
+    highScore: 0,
+
+
+
+}
+
 if (!localStorage.getItem("highScore")) {
     var newUser = true;
-    helpButtonClick;
-    localStorage.setItem("highScore", "10");
-    localStorage.setItem("gamesPlayed", "0");
-    localStorage.setItem("gamesWon", "0");
-    localStorage.setItem("winRate", "0%");
-    localStorage.setItem("averageTries", "10");
-    localStorage.setItem("timesVisited", "1");
+    helpButtonClick();
+    startStats();
 }
 else {
     var newUser = false
-    alert("Welcome back!")
+    //alert("Welcome back!")
+    //oh i think this resets if they switch between html pages
+    //idk how to fix, shouldn't be too bad tho
     currentTV = Number(localStorage.getItem("timesVisited"))
     localStorage.setItem("timesVisited", String(currentTV + 1));
     //show stats here
@@ -195,8 +204,16 @@ else {
 // end globals
 //
 
+function startMenu() {
+    drawStartButtons();
+}
+
 function startGame() {
     myGameArea.start();
+}
+
+function startStatPage() {
+    document.getElementById("gamesPlayed").innerHTML = "games played: " + userStats.gamesPlayed;
 }
 
 var myGameArea = {
@@ -215,7 +232,7 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         rectangle(sideBarWidth, screenSize.height, "#1f1f14", screenSize.width - sideBarWidth, 0);
-        drawBoard(screenSize);
+        drawBoard();
         drawGuessButtons();
         drawGradeButtons();
         drawDoneButton(doneButton);
@@ -231,6 +248,7 @@ var myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     reset: function() {
+        //delete this its for testing
         this.resetStats();
         this.start();
 
@@ -298,17 +316,29 @@ var myGameArea = {
     },
     resetStats: function() {
         if (confirm("Are you sure you want to reset your statistics?")) {
-            localStorage.setItem("highScore", "10");
-            localStorage.setItem("gamesPlayed", "0");
-            localStorage.setItem("gamesWon", "0");
-            localStorage.setItem("winRate", "0%");
-            localStorage.setItem("averageTries", "10");
-            localStorage.setItem("timesVisited", "1");
+            startStats();
         }
     }
 
         
 
+}
+
+function drawStartButtons() {
+    //var optionsDiv = document.getElementById("startButtons");
+    //optionsDiv.style.height = String(0.9 * screenSize.height) + 'px';
+    
+    var optionsDiv = document.getElementById("Play");
+    optionsDiv.style.top = String(0.4 * screenSize.height) + 'px';
+    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
+    
+    var optionsDiv = document.getElementById("Stats");
+    optionsDiv.style.top = String(0.7 * screenSize.height) + 'px';
+    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
+    
+    var optionsDiv = document.getElementById("Settings");
+    optionsDiv.style.top = String(screenSize.height) + 'px';
+    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
 }
 
 function drawGuessButtons() {
@@ -429,6 +459,7 @@ function drawModeButton(button) {
 function drawGuessButton(button, hOffset) {
     var buttonSizePx = buttonSize + 'px';
     button.style.position = 'absolute';
+    button.style.borderRadius = '50%'
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
@@ -440,9 +471,10 @@ function drawGuessButton(button, hOffset) {
     document.body.appendChild(button);
 }
 
-function drawGradeButton (button, hOffset) {
+function drawGradeButton(button, hOffset) {
     var buttonSizePx = (buttonSize / 2)+ 'px';
     button.style.position = 'absolute';
+    button.style.borderRadius = '50%'
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
@@ -576,6 +608,27 @@ function resetButtonClick() {
     myGameArea.reset()
 }
 
+function playButtonClick() {
+    var playButton = document.getElementById('Play');
+    playButton.parentNode.removeChild(playButton);
+    var statButton = document.getElementById('Stats');
+    statButton.parentNode.removeChild(statButton);
+    var settingsButton = document.getElementById('Settings');
+    settingsButton.parentNode.removeChild(settingsButton);
+    var title = document.getElementById('title');
+    title.parentNode.removeChild(title);
+
+    myGameArea.start();
+    //call myGameArea.start()
+}
+
+function statButtonClick() {
+    //show some statistics
+}
+
+function settingsButtonClick() {
+    alert("coming soon")
+}
 
 
 function processClick(color) {
@@ -791,7 +844,28 @@ function loseScreen() {
     //alert("drew real code")
 }
 
+function uploadStats() {
+    statsStr = JSON.stringify(userStats)
+    localStorage.setItem('testObject', statsStr);
+}
+
+function getStats() {
+    statsStr = localStorage.getItem('testObject');
+    userStats = JSON.parse(statStr);
+}
+
+function startStats() {
+    userStats.highScore = 10;
+    userStats.gamesPlayed = 0;
+    userStats.gamesWon = 0;
+    userStats.winRate = 0;
+    userStats.averageTries = 10;
+    userStats.timesVisited = 1;
+}
+
 function setStats(won, score) {
+    getStats();
+    /*
     currentGP = Number(localStorage.getItem("gamesPlayed"))
     newGP = currentGp + 1
     localStorage.setItem("gamesPlayed", String(newGp))
@@ -807,7 +881,24 @@ function setStats(won, score) {
     newTotalPoints = currentTotalPoints + score
     newAT = newTotalPoints / newGP
     localStorage.setItem("averageTries", String(newAT))
+    */
 
+   currentGP = userStats.gamesPlayed;
+   newGP = currentGp + 1;
+   userStats.gamesPlayed = newGP;
+   if (won) {
+       currentGW = userStats.gamesWon;
+       newGW = currentGW + 1;
+       userStats.gamesWon = newGW
+   }
+   newWR = Math.float(newGW / newGP) * 100;
+   userStats.winRate = newWR;
+   currentAT = userStats.averageTries;
+   currentTotalPoints = currentAT * newGP
+   newTotalPoints = currentTotalPoints + score
+   newAT = newTotalPoints / newGP
+   userStats.averageTries = newAT
+   uploadStats
 }
 
 
@@ -924,7 +1015,7 @@ function computerCode() {
 
 
 
-function drawBoard(screenSize) {
+function drawBoard() {
     var skip_lines = [1, 7, 8, 10];
     for (i = 1; i < numRows; i++) {
         //horizontal lines
