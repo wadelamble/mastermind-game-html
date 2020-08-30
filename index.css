@@ -57,19 +57,52 @@ button {
 }
 
 #statsDiv {
-    background-color: olive;
-    margin-left: 20%;
-    margin-right: 20%;
+    background-color: grey;
+    margin-left: 30%;
+    margin-right: 30%;
 }
 h3 {
-    color: navy;
+    padding-top: 5%;
+    color: black;
     text-align: center;
     
 }
 
 #resetStats {
-        background-color: darkgreen;
+        background-color: navy;
+        color: white;
         padding: 15px 32px;
-        border: none;
-        cursor: pointer;
+        margin: auto;
+}
+
+.container {
+    height: 200px;
+    position: relative;
+    border: none;
+}
+  
+.center {
+    margin: 0;
+    position: absolute;
+    top: 93%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+  }
+  
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+  
+.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
 }
