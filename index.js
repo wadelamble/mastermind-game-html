@@ -654,14 +654,12 @@ function processClick(color) {
             }
             
             if (grade.reds === 4) {
-                setStats(true, element.y);
+                newHighScore = setStats(true, element.y);
                 winScreen();
                 setTimeout(function() {
                     msg = "Congratulations, you won! \n";
-                    //setting the high score
-                    if (element.y < Number(localStorage.getItem("highScore"))) {
-                        localStorage.setItem("highScore", String(element.y))
-                        msg += "New high score: " + localStorage.getItem("highScore") + "! \n"
+                    if (newHighScore) {
+                        msg += "New high score: " + userStats.highScore + "! \n"
                     }
                     msg += "Play again?"
                     
@@ -860,6 +858,13 @@ function startStats() {
 
 function setStats(won, score) {
     getStats();
+    if (score < userStats.highScore) {
+        userStats.highScore = score;
+        newHighScore = true;
+    }
+    else {
+        newHighScore = false;
+    }
     currentGP = userStats.gamesPlayed;
     newGP = currentGP + 1;
     userStats.gamesPlayed = newGP;
@@ -871,11 +876,14 @@ function setStats(won, score) {
     newWR = Math.floor(newGW / newGP) * 100;
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
-    currentTotalPoints = currentAT * newGP;
+    currentTotalPoints = currentAT * currentGP;
+    alert(currentTotalPoints)
     newTotalPoints = currentTotalPoints + score;
     newAT = newTotalPoints / userStats.gamesPlayed;
+    alert(newAT)
     userStats.averageTries = newAT;
-    uploadStats();
+    uploadStats();  
+    return newHighScore;
 }
 
 
