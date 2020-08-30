@@ -722,7 +722,7 @@ function processClick(color) {
 }
 
 function processGradeClick(color) {
-    if (mode.value = mode.codeMaker) {
+    if (mode.value == mode.codeMaker) {
         numPlayerGradeClicks++;
         if (numPlayerGradeClicks > 4) {
             alert("too many player grades entered");
