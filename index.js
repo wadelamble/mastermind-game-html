@@ -10,7 +10,7 @@ var myGamePiece;
 
 const screenSize = {
     height : 0.85 * window.innerHeight,
-    width : 0.97 * window.innerWidth
+    width : 0.95 * window.innerWidth
 };
 
 var setGameBoardMarginToZero = false;
