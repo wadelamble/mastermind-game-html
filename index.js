@@ -184,6 +184,8 @@ if (!localStorage.getItem("highScore")) {
 else {
     var newUser = false
     //alert("Welcome back!")
+    //oh i think this resets if they switch between html pages
+    //idk how to fix, shouldn't be too bad tho
     currentTV = Number(localStorage.getItem("timesVisited"))
     localStorage.setItem("timesVisited", String(currentTV + 1));
     //show stats here
@@ -193,13 +195,16 @@ else {
 // end globals
 //
 
-function start() {
-    //stuff to make starting buttons work
+function startMenu() {
     drawStartButtons();
-
 }
+
 function startGame() {
     myGameArea.start();
+}
+
+function startStatPage() {
+    document.getElementById("gamesPlayed").innerHTML = "games played: " + userStats.gamesPlayed;
 }
 
 var myGameArea = {
@@ -310,8 +315,8 @@ var myGameArea = {
 }
 
 function drawStartButtons() {
-    var optionsDiv = document.getElementById("startButtons");
-    optionsDiv.style.height = String(0.9 * screenSize.height) + 'px';
+    //var optionsDiv = document.getElementById("startButtons");
+    //optionsDiv.style.height = String(0.9 * screenSize.height) + 'px';
     
     var optionsDiv = document.getElementById("Play");
     optionsDiv.style.top = String(0.4 * screenSize.height) + 'px';

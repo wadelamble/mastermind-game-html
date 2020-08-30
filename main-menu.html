@@ -2,11 +2,16 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!--<link rel="stylesheet" type="text/css" href="index.css">-->
+<link rel="stylesheet" type="text/css" href="index.css">
 <link rel="icon" type="image/png" href="mastermind icon.png">
 </head>
-<body>
-
-<script src="main-menu.js"></script>
+<body onload="startMenu()">
+    <h1 id='title'>MASTERMIND</h1>
+    <div id="startButtons">
+        <button id="Play" class="playButton" onclick="window.location.href='play.html'" type="button">Play</button>
+        <button id="Stats" class="statsButton" onclick="window.location.href='stats.html'" type="button">Statistics</button>
+        <button id="Settings" class="settingsButton" onclick='settingsButtonClick()'>Settings</button>
+    </div>
+<script src="index.js"></script>
 </body>
 </html>
