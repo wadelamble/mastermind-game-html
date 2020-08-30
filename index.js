@@ -123,9 +123,9 @@ modeButton.style.border = 'black';
 modeButton.addEventListener('click', function() { modeButtonClick(); });
 
 var mode = {
-    codeBreaker: 'CodeBreaker',
-    codeMaker: 'CodeMaker',
-    value: 'CodeBreaker'
+    codeBreaker: 'Breaker',
+    codeMaker: 'Maker',
+    value: 'Breaker'
 };
 
 
@@ -466,8 +466,8 @@ function drawModeButton(button) {
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     button.textContent = mode.value;
-    button.style.textAlign = "center";
-    button.style.fontSize = '13px';
+    //button.style.textAlign = "center";
+    //button.style.fontSize = '13px';
     button.style.color = "yellow";
     document.body.appendChild(button);
 }
