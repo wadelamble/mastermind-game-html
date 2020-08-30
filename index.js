@@ -877,10 +877,10 @@ function setStats(won, score) {
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
     currentTotalPoints = currentAT * currentGP;
-    alert(currentTotalPoints)
+    //alert(currentTotalPoints)
     newTotalPoints = currentTotalPoints + score;
     newAT = newTotalPoints / userStats.gamesPlayed;
-    alert(newAT)
+    //alert(newAT)
     userStats.averageTries = newAT;
     uploadStats();  
     return newHighScore;
