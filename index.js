@@ -10,7 +10,7 @@ var myGamePiece;
 
 const screenSize = {
     height : 0.85 * window.innerHeight,
-    width : 0.9 * window.innerWidth
+    width : 0.97 * window.innerWidth
 };
 
 var setGameBoardMarginToZero = false;
@@ -452,6 +452,7 @@ function drawModeButton(button) {
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     button.textContent = mode.value;
+    button.textAlign = "center";
     button.style.color = "yellow";
     document.body.appendChild(button);
 }
@@ -472,7 +473,7 @@ function drawGuessButton(button, hOffset) {
 }
 
 function drawGradeButton(button, hOffset) {
-    var buttonSizePx = (buttonSize / 2)+ 'px';
+    var buttonSizePx = (buttonSize / 1.5)+ 'px';
     button.style.position = 'absolute';
     button.style.borderRadius = '50%'
     button.style.width = buttonSizePx;
