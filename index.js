@@ -175,8 +175,8 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
-if (!localStorage.getItem("test2")) {
-    localStorage.setItem("test2", "forchecking") 
+if (!localStorage.getItem("1")) {
+    localStorage.setItem("1", "test") 
     var newUser = true;
     helpButtonClick();
     var userStats = {
@@ -187,10 +187,6 @@ if (!localStorage.getItem("test2")) {
         winRate: 0,
         highScore: 0,
     }
-    alert("testing")
-    uploadStats();
-    getStats();
-    alert("done testing")
     startStats();
 }
 else {
@@ -313,7 +309,6 @@ var myGameArea = {
             drawGuessCircle(temp, 0, "black")
             temp -= 1
             code.pop()
-            alert(temp)
             if (temp === 3) {
 
                 for (i=0; i<4; i++) {
@@ -659,14 +654,12 @@ function processClick(color) {
             }
             
             if (grade.reds === 4) {
-                setStats(true, element.y);
+                newHighScore = setStats(true, element.y);
                 winScreen();
                 setTimeout(function() {
                     msg = "Congratulations, you won! \n";
-                    //setting the high score
-                    if (element.y < Number(localStorage.getItem("highScore"))) {
-                        localStorage.setItem("highScore", String(element.y))
-                        msg += "New high score: " + localStorage.getItem("highScore") + "! \n"
+                    if (newHighScore) {
+                        msg += "New high score: " + userStats.highScore + "! \n"
                     }
                     msg += "Play again?"
                     
@@ -792,11 +785,9 @@ function drawGradeCircle(x_loc, y_loc, color) {
 
 
 function winScreen() {
-    alert("in win")
     var mode = 0;
     var flashing = setInterval(flash, 100);
     function flash() {
-        alert("in flash")
         mode++;
         if (mode % 2 == 1) {
             for (j=0; j<4; j++) {
@@ -812,7 +803,6 @@ function winScreen() {
             clearInterval(flashing)
         }
     }
-    alert("exiting win")
 }
 
 function loseScreen() {
@@ -852,7 +842,7 @@ function getStats() {
     statsStr = localStorage.getItem('stats');
     userStats = JSON.parse(statsStr);
     if (userStats == null) {
-        alert("vat")
+        alert("Error 123: Coding fail")
     }
 }
 
@@ -861,39 +851,45 @@ function startStats() {
     userStats.gamesPlayed = 0;
     userStats.gamesWon = 0;
     userStats.winRate = 0;
-    userStats.averageTries = 10;
+    userStats.averageTries = 0;
     userStats.timesVisited = 1;
     uploadStats();
 }
 
 function setStats(won, score) {
-    alert("gettinstarted")
     getStats();
-    alert("in stats")
+    if (score < userStats.highScore) {
+        userStats.highScore = score;
+        newHighScore = true;
+    }
+    else {
+        newHighScore = false;
+    }
     currentGP = userStats.gamesPlayed;
     newGP = currentGP + 1;
     userStats.gamesPlayed = newGP;
     if (won) {
         currentGW = userStats.gamesWon;
         newGW = currentGW + 1;
-        userStats.gamesWon = newGW
+        userStats.gamesWon = newGW;
     }
     newWR = Math.floor(newGW / newGP) * 100;
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
-    currentTotalPoints = currentAT * newGP
-    newTotalPoints = currentTotalPoints + score
-    newAT = newTotalPoints / newGP
-    userStats.averageTries = newAT
-    alert("almost there")
-    uploadStats();
-    alert("out of stats")
+    currentTotalPoints = currentAT * currentGP;
+    alert(currentTotalPoints)
+    newTotalPoints = currentTotalPoints + score;
+    newAT = newTotalPoints / userStats.gamesPlayed;
+    alert(newAT)
+    userStats.averageTries = newAT;
+    uploadStats();  
+    return newHighScore;
 }
 
 
 function computerGrade(toBeGraded, code) {
     if (toBeGraded.includes('0')) {
-        alert("fail");
+        alert("Error 123: Coding Fail");
     }
     grade.reds = 0;
     grade.whites = 0;
@@ -1050,7 +1046,3 @@ function drawBoard() {
     //computerCode();
     //computerGuess(0)
 }
-
-
-
-
