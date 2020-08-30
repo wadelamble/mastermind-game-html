@@ -175,8 +175,8 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
-if (!localStorage.getItem("test")) {
-    localStorage.setItem("test", "1") 
+if (!localStorage.getItem("1")) {
+    localStorage.setItem("1", "test") 
     var newUser = true;
     helpButtonClick();
     var userStats = {
