@@ -15,6 +15,10 @@ h1 {
     padding-bottom: 3%;
 }
 
+button {
+    cursor: pointer;
+    border: none;
+}
 
 .playButton {
     left: 10%;
@@ -44,4 +48,20 @@ h1 {
     background-color: grey;
     margin-top: 3%;
     position: absolute;
+}
+
+#stats {
+    background-color: olive;
+}
+h3 {
+    color: navy;
+    text-align: center;
+    
+}
+
+#resetStats {
+        background-color: darkgreen;
+        padding: 15px 32px;
+        border: none;
+        cursor: pointer;
 }

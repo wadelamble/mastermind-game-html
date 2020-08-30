@@ -164,30 +164,36 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
-var userStats = {
-    timesVisited: 0,
-    gamesPlayed: 0,
-    gamesWon: 0,
-    averageTries: 0,
-    winRate: 0,
-    highScore: 0,
 
 
 
-}
-
-if (!localStorage.getItem("highScore")) {
+if (!localStorage.getItem("test2")) {
+    localStorage.setItem("test2", "forchecking") 
     var newUser = true;
     helpButtonClick();
+    var userStats = {
+        timesVisited: 0,
+        gamesPlayed: 0,
+        gamesWon: 0,
+        averageTries: 0,
+        winRate: 0,
+        highScore: 0,
+    }
+    alert("testing")
+    uploadStats();
+    getStats();
+    alert("done testing")
     startStats();
 }
 else {
     var newUser = false
+    getStats();
     //alert("Welcome back!")
     //oh i think this resets if they switch between html pages
     //idk how to fix, shouldn't be too bad tho
-    currentTV = Number(localStorage.getItem("timesVisited"))
-    localStorage.setItem("timesVisited", String(currentTV + 1));
+    currentTV = userStats.timesVisited
+    userStats.timesVisited = (currentTV + 1);
+    uploadStats();
     //show stats here
 }
 
@@ -204,7 +210,14 @@ function startGame() {
 }
 
 function startStatPage() {
-    document.getElementById("gamesPlayed").innerHTML = "games played: " + userStats.gamesPlayed;
+    //getStats();
+    document.getElementById("gamesPlayed").innerHTML = "Games played: " + userStats.gamesPlayed;
+    document.getElementById("gamesWon").innerHTML = "Games won: " + userStats.gamesWon;
+    document.getElementById("winRate").innerHTML = "Win Rate: " + userStats.winRate + "%";
+    document.getElementById("averageTries").innerHTML = "Average number of guesses: " + userStats.averageTries;
+    document.getElementById("highScore").innerHTML = "High score (least number of guessses): " + userStats.highScore;
+    //we can un-comment this out, i just don't think its necessary. its kinda cool for us to see
+    //document.getElementById("timesVisited").innerHTML = "Times you've visited this site: " + userStats.timesVisited;
 }
 
 var myGameArea = {
@@ -239,7 +252,7 @@ var myGameArea = {
     },
     reset: function() {
         //delete this its for testing
-        this.resetStats();
+        //this.resetStats();
         this.start();
 
         // set state variables. this is super unacceptable
@@ -265,7 +278,7 @@ var myGameArea = {
     },
 
     backCB: function() {
-        if (!element.x === 4) {
+        if (element.x != 4) {
             guessMatrix[element.y - 1][element.x - 1] = '0'
 
             drawGuessCircle(element.x, element.y, "black")
@@ -307,6 +320,7 @@ var myGameArea = {
     resetStats: function() {
         if (confirm("Are you sure you want to reset your statistics?")) {
             startStats();
+            startStatPage();
         }
     }
 
@@ -598,6 +612,10 @@ function resetButtonClick() {
     myGameArea.reset()
 }
 
+function resetStatClick() {
+    myGameArea.resetStats();
+}
+
 function playButtonClick() {
     var playButton = document.getElementById('Play');
     playButton.parentNode.removeChild(playButton);
@@ -612,9 +630,6 @@ function playButtonClick() {
     //call myGameArea.start()
 }
 
-function statButtonClick() {
-    //show some statistics
-}
 
 function settingsButtonClick() {
     alert("coming soon")
@@ -667,9 +682,10 @@ function processClick(color) {
                     else {
                         //should we leave it how it is, or go to the main menu?
                         //i think main menu
+                        //hmm actually maybe just leave it how it is, and then make a button to go back to the main menu
                     }
 
-                }, 2000);
+                }, 2500);
 
                 
             }
@@ -776,20 +792,14 @@ function drawGradeCircle(x_loc, y_loc, color) {
     circle(grader, color, this.x, this.y);
 }
 
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-            break;
-        }
-    }
-}
+
 
 function winScreen() {
-    var mode = 0
-    var flashing = setInterval(flash, 100)
-
+    alert("in win")
+    var mode = 0;
+    var flashing = setInterval(flash, 100);
     function flash() {
+        alert("in flash")
         mode++;
         if (mode % 2 == 1) {
             for (j=0; j<4; j++) {
@@ -805,6 +815,7 @@ function winScreen() {
             clearInterval(flashing)
         }
     }
+    alert("exiting win")
 }
 
 function loseScreen() {
@@ -837,12 +848,15 @@ function loseScreen() {
 
 function uploadStats() {
     statsStr = JSON.stringify(userStats)
-    localStorage.setItem('testObject', statsStr);
+    localStorage.setItem('stats', statsStr);
 }
 
 function getStats() {
-    statsStr = localStorage.getItem('testObject');
-    userStats = JSON.parse(statStr);
+    statsStr = localStorage.getItem('stats');
+    userStats = JSON.parse(statsStr);
+    if (userStats == null) {
+        alert("vat")
+    }
 }
 
 function startStats() {
@@ -852,44 +866,31 @@ function startStats() {
     userStats.winRate = 0;
     userStats.averageTries = 10;
     userStats.timesVisited = 1;
+    uploadStats();
 }
 
 function setStats(won, score) {
+    alert("gettinstarted")
     getStats();
-    /*
-    currentGP = Number(localStorage.getItem("gamesPlayed"))
-    newGP = currentGp + 1
-    localStorage.setItem("gamesPlayed", String(newGp))
+    alert("in stats")
+    currentGP = userStats.gamesPlayed;
+    newGP = currentGP + 1;
+    userStats.gamesPlayed = newGP;
     if (won) {
-        currentGW = Number(localStorage.getItem("gamesWon"))
-        newGW = currentGW + 1
-        localStorage.setItem("gamesWon", String(newGW))
+        currentGW = userStats.gamesWon;
+        newGW = currentGW + 1;
+        userStats.gamesWon = newGW
     }
-    newWR = String(Math.float(newGW / newGP)) + "%"
-    localStorage.setItem("winRate", String(newWR))
-    currentAT = Number(localStorage.getItem("averageTries"))
+    newWR = Math.floor(newGW / newGP) * 100;
+    userStats.winRate = newWR;
+    currentAT = userStats.averageTries;
     currentTotalPoints = currentAT * newGP
     newTotalPoints = currentTotalPoints + score
     newAT = newTotalPoints / newGP
-    localStorage.setItem("averageTries", String(newAT))
-    */
-
-   currentGP = userStats.gamesPlayed;
-   newGP = currentGp + 1;
-   userStats.gamesPlayed = newGP;
-   if (won) {
-       currentGW = userStats.gamesWon;
-       newGW = currentGW + 1;
-       userStats.gamesWon = newGW
-   }
-   newWR = Math.float(newGW / newGP) * 100;
-   userStats.winRate = newWR;
-   currentAT = userStats.averageTries;
-   currentTotalPoints = currentAT * newGP
-   newTotalPoints = currentTotalPoints + score
-   newAT = newTotalPoints / newGP
-   userStats.averageTries = newAT
-   uploadStats
+    userStats.averageTries = newAT
+    alert("almost there")
+    uploadStats();
+    alert("out of stats")
 }
 
 
