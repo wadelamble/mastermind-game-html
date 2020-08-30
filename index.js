@@ -853,7 +853,7 @@ function startStats() {
     userStats.gamesPlayed = 0;
     userStats.gamesWon = 0;
     userStats.winRate = 0;
-    userStats.averageTries = 10;
+    userStats.averageTries = 0;
     userStats.timesVisited = 1;
     uploadStats();
 }
@@ -866,15 +866,15 @@ function setStats(won, score) {
     if (won) {
         currentGW = userStats.gamesWon;
         newGW = currentGW + 1;
-        userStats.gamesWon = newGW
+        userStats.gamesWon = newGW;
     }
     newWR = Math.floor(newGW / newGP) * 100;
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
-    currentTotalPoints = currentAT * newGP
-    newTotalPoints = currentTotalPoints + score
-    newAT = newTotalPoints / newGP
-    userStats.averageTries = newAT
+    currentTotalPoints = currentAT * newGP;
+    newTotalPoints = currentTotalPoints + score;
+    newAT = newTotalPoints / userStats.gamesPlayed;
+    userStats.averageTries = newAT;
     uploadStats();
 }
 

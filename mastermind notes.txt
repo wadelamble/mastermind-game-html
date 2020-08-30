@@ -1,0 +1,13 @@
+css: 72
+html: 50
+js: 1052
+total 1174
+
+
+TODO: 
+ bugs:
+1. times visited thingy adds one when they switch around links. idk how to fix this
+
+things:
+back button?
+settings?
