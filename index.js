@@ -175,8 +175,8 @@ for (i=0; i<6; i++) {
 
 var temp = 0
 
-if (!localStorage.getItem("test2")) {
-    localStorage.setItem("test2", "forchecking") 
+if (!localStorage.getItem("test3")) {
+    localStorage.setItem("test3", "forchecking") 
     var newUser = true;
     helpButtonClick();
     var userStats = {
@@ -187,10 +187,6 @@ if (!localStorage.getItem("test2")) {
         winRate: 0,
         highScore: 0,
     }
-    alert("testing")
-    uploadStats();
-    getStats();
-    alert("done testing")
     startStats();
 }
 else {
@@ -313,7 +309,6 @@ var myGameArea = {
             drawGuessCircle(temp, 0, "black")
             temp -= 1
             code.pop()
-            alert(temp)
             if (temp === 3) {
 
                 for (i=0; i<4; i++) {
@@ -792,11 +787,9 @@ function drawGradeCircle(x_loc, y_loc, color) {
 
 
 function winScreen() {
-    alert("in win")
     var mode = 0;
     var flashing = setInterval(flash, 100);
     function flash() {
-        alert("in flash")
         mode++;
         if (mode % 2 == 1) {
             for (j=0; j<4; j++) {
@@ -812,7 +805,6 @@ function winScreen() {
             clearInterval(flashing)
         }
     }
-    alert("exiting win")
 }
 
 function loseScreen() {
@@ -852,7 +844,7 @@ function getStats() {
     statsStr = localStorage.getItem('stats');
     userStats = JSON.parse(statsStr);
     if (userStats == null) {
-        alert("vat")
+        alert("Error 123: Coding fail")
     }
 }
 
@@ -867,9 +859,7 @@ function startStats() {
 }
 
 function setStats(won, score) {
-    alert("gettinstarted")
     getStats();
-    alert("in stats")
     currentGP = userStats.gamesPlayed;
     newGP = currentGP + 1;
     userStats.gamesPlayed = newGP;
@@ -885,15 +875,13 @@ function setStats(won, score) {
     newTotalPoints = currentTotalPoints + score
     newAT = newTotalPoints / newGP
     userStats.averageTries = newAT
-    alert("almost there")
     uploadStats();
-    alert("out of stats")
 }
 
 
 function computerGrade(toBeGraded, code) {
     if (toBeGraded.includes('0')) {
-        alert("fail");
+        alert("Error 123: Coding Fail");
     }
     grade.reds = 0;
     grade.whites = 0;
@@ -1050,7 +1038,3 @@ function drawBoard() {
     //computerCode();
     //computerGuess(0)
 }
-
-
-
-
