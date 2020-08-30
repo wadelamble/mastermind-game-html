@@ -5,7 +5,13 @@
 <link rel="stylesheet" type="text/css" href="index.css">
 <link rel="icon" type="image/png" href="mastermind icon.png">
 </head>
-<body onload="startGame()" id="test">
+<body onload="start()">
+    <h1 id='title'>MASTERMIND</h1>
+    <div id="startButtons">
+        <button id="Play" class="playButton" onclick='playButtonClick()'>Play</button>
+        <button id="Stats" class="statsButton" onclick='statButtonClick()'>Statistics</button>
+        <button id="Settings" class="settingsButton" onclick='settingsButtonClick()'>Settings</button>
+    </div>
 <script src="index.js"></script>
 </body>
 </html>

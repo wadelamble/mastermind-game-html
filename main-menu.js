@@ -3,15 +3,3 @@
 newUser = false
 
 
-function playButtonClick() {
-    //call drawBoard function
-    //call myGameArea.start()
-}
-
-function statButtonClick() {
-    
-}
-
-function settingsButtonClick() {
-
-}
