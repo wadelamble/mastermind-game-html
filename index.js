@@ -452,7 +452,8 @@ function drawModeButton(button) {
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
     button.textContent = mode.value;
-    button.textAlign = "center";
+    button.style.textAlign = "center";
+    button.style.fontSize = '13px';
     button.style.color = "yellow";
     document.body.appendChild(button);
 }
