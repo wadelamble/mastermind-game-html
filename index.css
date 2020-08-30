@@ -26,17 +26,22 @@ button {
     margin: auto;
     background-color: blue;
     padding-top: 3%;
-    padding-bottom: 3%
+    padding-bottom: 3%;
+    font-size: 150%;
 }
 
 #Stats {
-    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: auto;
+    margin-right: auto;
     display: block;
     width: 25%; 
     height: 15%;
     background-color: purple;
     padding-top: 3%;
-    padding-bottom: 3%
+    padding-bottom: 3%;
+    font-size: 150%;
 }
 
 #Settings {
@@ -46,7 +51,8 @@ button {
     height: 15%;
     background-color: grey;
     padding-top: 3%;
-    padding-bottom: 3%
+    padding-bottom: 3%;
+    font-size: 150%;
 }
 
 #stats {
