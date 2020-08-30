@@ -9,7 +9,7 @@ body {
 }
 
 h1 {
-    font-size: 500%;
+    font-size: 7vw;
     text-align: center;
     padding-bottom: 1%;
 }
@@ -27,7 +27,7 @@ button {
     background-color: blue;
     padding-top: 3%;
     padding-bottom: 3%;
-    font-size: 150%;
+    font-size: 2vw;
 }
 
 #Stats {
@@ -41,7 +41,7 @@ button {
     background-color: purple;
     padding-top: 3%;
     padding-bottom: 3%;
-    font-size: 150%;
+    font-size: 2vw;
 }
 
 #Settings {
@@ -52,7 +52,7 @@ button {
     background-color: grey;
     padding-top: 3%;
     padding-bottom: 3%;
-    font-size: 150%;
+    font-size: 2vw;
 }
 
 #stats {
