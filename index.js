@@ -340,7 +340,7 @@ var myGameArea = {
 function drawStartButtons() {
     //var optionsDiv = document.getElementById("startButtons");
     //optionsDiv.style.height = String(0.9 * screenSize.height) + 'px';
-    
+    /*
     var optionsDiv = document.getElementById("Play");
     optionsDiv.style.top = String(0.4 * screenSize.height) + 'px';
     optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
@@ -352,6 +352,7 @@ function drawStartButtons() {
     var optionsDiv = document.getElementById("Settings");
     optionsDiv.style.top = String(screenSize.height) + 'px';
     optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
+    */
 }
 
 function drawGuessButtons() {
@@ -625,20 +626,6 @@ function resetButtonClick() {
 
 function resetStatClick() {
     myGameArea.resetStats();
-}
-
-function playButtonClick() {
-    var playButton = document.getElementById('Play');
-    playButton.parentNode.removeChild(playButton);
-    var statButton = document.getElementById('Stats');
-    statButton.parentNode.removeChild(statButton);
-    var settingsButton = document.getElementById('Settings');
-    settingsButton.parentNode.removeChild(settingsButton);
-    var title = document.getElementById('title');
-    title.parentNode.removeChild(title);
-
-    myGameArea.start();
-    //call myGameArea.start()
 }
 
 

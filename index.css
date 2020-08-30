@@ -19,31 +19,34 @@ button {
     border: none;
 }
 
-.playButton {
-    left: 10%;
+#Play {
     display: block;
     width: 25%; 
     height: 15%;
+    margin: auto;
     background-color: blue;
-    position: absolute;
+    padding-top: 3%;
+    padding-bottom: 3%
 }
 
-.statsButton {
-    left: 300px;
+#Stats {
+    margin: auto;
     display: block;
     width: 25%; 
     height: 15%;
     background-color: purple;
-    position: absolute;
+    padding-top: 3%;
+    padding-bottom: 3%
 }
 
-.settingsButton {
-    left: 300px;
+#Settings {
+    margin: auto;
     display: block;
     width: 25%; 
     height: 15%;
     background-color: grey;
-    position: absolute;
+    padding-top: 3%;
+    padding-bottom: 3%
 }
 
 #stats {
