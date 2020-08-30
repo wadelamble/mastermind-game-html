@@ -600,12 +600,12 @@ function helpButtonClick() {
         
     //textBlock.innerText = "Help";
     //document.body.appendChild(textBlock);*/
-    var msg = "Welcome to the Internet's first ever version of the classic board game Mastermind.\n\n";
-    msg += "The goal of the game is to guess the secret code.\n\n";
-    msg += "There are two modes to play: Be the code-breaker and the computer grades you, or create your own code, and grade the computer's guesses.\n\n";
-    msg += "A red grade peg indicates that a code peg is the correct color in the correct position,";
-    msg += " while a white grade peg indicates that a code peg is the correct color, but in the incorrect position.\n";
-    msg += "Toggle between game modes by clicking the indicator in the lower right corner. This will reset the game.\n"
+    var msg = "Welcome to Mastermind. ";
+    msg += "Attempt to guess the secret code or create a secret code for the computer to guess.\n\n";
+    msg += "To guess or grade, use the buttons on the right-hand side of the game board. ";
+    msg += "To change play mode, click the yellow \"Maker/Breaker\" button in the lower right corner.\n";
+    msg += "A red grade peg indicates that a guess is the correct color in the correct position. ";
+    msg += "A white grade peg indicates that a guess is the correct color, but in the incorrect position. ";
 
     alert(msg);
 
@@ -1045,7 +1045,7 @@ function drawBoard() {
     }
     this.fontSize = screenSize.height / numRows * 0.4;
     this.fontString = fontSize + "px Arial"
-    text(this.fontString, "COLORS", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
+    text(this.fontString, "GUESSES", guessBarWidth + gradeBarWidth * 1.5, (screenSize.height / (numRows * 2)) + fontSize / 2);
     text(this.fontString, "GRADES", guessBarWidth + gradeBarWidth * 1.5, screenSize.height - (screenSize.height * 3 / numRows) - fontSize);
     //computerCode();
     //computerGuess(0)
