@@ -2,11 +2,16 @@
 // Globals -- eek so many, what's the right pattern here?
 //
 var myGamePiece;
+
 const screenSize = {
     //the 300 accounts for the taskbar, tabs, and search bar
-    height : screen.height - 300,
-    width : screen.height - 300
+    height : 0.6 * screen.height,
+    width : 0.6 * screen.height
 };
+
+if (screen.height > screen.width) {
+    screenSize.width = screen.width;
+}
 
 var sideBarWidth = screenSize.width / 5;
 //Ask dad if we should change this
