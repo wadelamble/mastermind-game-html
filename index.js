@@ -460,7 +460,7 @@ function drawModeButton(button) {
 function drawGuessButton(button, hOffset) {
     var buttonSizePx = buttonSize + 'px';
     button.style.position = 'absolute';
-    button.style.borderRadius = '50%'
+    button.style.borderRadius = '100%'
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
@@ -473,9 +473,9 @@ function drawGuessButton(button, hOffset) {
 }
 
 function drawGradeButton(button, hOffset) {
-    var buttonSizePx = (buttonSize / 1.5)+ 'px';
+    var buttonSizePx = (buttonSize / 2)+ 'px';
     button.style.position = 'absolute';
-    button.style.borderRadius = '50%'
+    button.style.borderRadius = '100%'
     button.style.width = buttonSizePx;
     button.style.height = buttonSizePx;
     var wOffset = document.getElementById("board").offsetLeft;
