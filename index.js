@@ -199,6 +199,11 @@ else {
 // end globals
 //
 
+(async function() {
+    let { text } = await( await fetch(`/api/message`)).json();
+    document.querySelector('#name').textContent = text;
+}())
+
 function startMenu() {
     drawStartButtons();
 }
@@ -380,7 +385,13 @@ function drawMainButton(button) {
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
     button.style.left = wOffsetStr;
-    button.textContent = "Main Menu";
+    button.textContent = " Main Menu";
+    var arrow = document.createElement("I")
+    arrow.classList.add("arrow");
+    arrow.classList.add("left")
+    //button.appendChild(arrow);
+    button.insertBefore(arrow, button.childNodes[0])
+    
     //button.style.textAlign = "center";
     //button.style.fontSize = '13px';
     button.style.color = "white";
