@@ -297,8 +297,8 @@ var myGameArea = {
             for (i=0; i<4; i++) {
                 drawGradeCircle(i+1, element.y, "black");
             }
-            grade.reds = 0
-            grade.whites = 0
+            grade.reds = 0;
+            grade.whites = 0;
         }
         else {
             drawGuessCircle(temp, 0, "black")
@@ -309,8 +309,8 @@ var myGameArea = {
                 for (i=0; i<4; i++) {
                     drawGuessCircle(i+1, 1, "black")
                     guessMatrix[0] = ['0', '0', '0', '0']
-                    element.x = 1
-                    element.y = 1
+                    element.x = 1;
+                    element.y = 1;
 
                 }
             }
