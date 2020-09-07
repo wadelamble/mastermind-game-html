@@ -195,14 +195,27 @@ else {
     //show stats here
 }
 
+//azure blob storage globals
+const { BlobServiceClient } = require("@azure/storage-blob");
+const createContainerButton = document.getElementById("create-container-button");
+const deleteContainerButton = document.getElementById("delete-container-button");
+const selectButton = document.getElementById("select-button");
+const fileInput = document.getElementById("file-input");
+const listButton = document.getElementById("list-button");
+const deleteButton = document.getElementById("delete-button");
+const status = document.getElementById("status");
+const fileList = document.getElementById("file-list");
+
+const reportStatus = message => {
+    status.innerHTML += `${message}<br/>`;
+    status.scrollTop = status.scrollHeight;
+}
+// Update <placeholder> with your Blob service SAS URL string
+const blobSasUrl = "<placeholder>";
+
 //
 // end globals
 //
-
-(async function() {
-    let { text } = await( await fetch(`/api/message`)).json();
-    document.querySelector('#name').textContent = text;
-}())
 
 function startMenu() {
     drawStartButtons();
