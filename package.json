@@ -13,6 +13,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "browserslist": [
+    "last 1 Edge version",
+    "last 1 Chrome version",
+    "last 1 Firefox version"
+  ],
   "bugs": {
     "url": "https://github.com/wadelamble/mastermind-game-html/issues"
   },

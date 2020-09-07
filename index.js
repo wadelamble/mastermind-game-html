@@ -195,22 +195,27 @@ else {
     //show stats here
 }
 
+//azure blob storage globals
+const { BlobServiceClient } = require("@azure/storage-blob");
+const createContainerButton = document.getElementById("create-container-button");
+const deleteContainerButton = document.getElementById("delete-container-button");
+const selectButton = document.getElementById("select-button");
+const fileInput = document.getElementById("file-input");
+const listButton = document.getElementById("list-button");
+const deleteButton = document.getElementById("delete-button");
+const status = document.getElementById("status");
+const fileList = document.getElementById("file-list");
+
+const reportStatus = message => {
+    status.innerHTML += `${message}<br/>`;
+    status.scrollTop = status.scrollHeight;
+}
+// Update <placeholder> with your Blob service SAS URL string
+const blobSasUrl = "<placeholder>";
+
 //
 // end globals
 //
-
-(async function() {
-    let { text } = await( await fetch(`/api/message`)).json();
-    document.querySelector('#name').textContent = text;
-}())
-
-module.exports = function(context) {
-    context.log('Node.js Queue trigger function processed', context.bindings.myQueueItem);
-    context.bindings.myOutputBlob = context.bindings.myInputBlob;
-    context.done();
-};
-
-alert(context.bindings.myOutputBlob);
 
 function startMenu() {
     drawStartButtons();
@@ -310,8 +315,8 @@ var myGameArea = {
             for (i=0; i<4; i++) {
                 drawGradeCircle(i+1, element.y, "black");
             }
-            grade.reds = 0
-            grade.whites = 0
+            grade.reds = 0;
+            grade.whites = 0;
         }
         else {
             drawGuessCircle(temp, 0, "black")
@@ -322,8 +327,8 @@ var myGameArea = {
                 for (i=0; i<4; i++) {
                     drawGuessCircle(i+1, 1, "black")
                     guessMatrix[0] = ['0', '0', '0', '0']
-                    element.x = 1
-                    element.y = 1
+                    element.x = 1;
+                    element.y = 1;
 
                 }
             }
