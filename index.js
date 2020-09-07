@@ -211,7 +211,65 @@ const reportStatus = message => {
     status.scrollTop = status.scrollHeight;
 }
 // Update <placeholder> with your Blob service SAS URL string
-const blobSasUrl = "<placeholder>";
+const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-08T06:24:59Z&st=2020-09-07T22:24:59Z&spr=https&sig=DVSxA0oAFsn%2B2m1bVhhfE6ZUWzXVRyyWoHEKN0hbqLI%3D";
+
+// Create a new BlobServiceClient
+const blobServiceClient = new BlobServiceClient(blobSasUrl);
+
+// Create a unique name for the container by 
+// appending the current time to the file name
+const containerName = "mw-mastermind-blob-container"
+
+// Get a container client from the BlobServiceClient
+const containerClient = blobServiceClient.getContainerClient(containerName);
+
+const createContainer = async () => {
+    try {
+        reportStatus(`Creating container "${containerName}"...`);
+        await containerClient.create();
+        reportStatus(`Done.`);
+    } catch (error) {
+        reportStatus(error.message);
+    }
+};
+
+const deleteContainer = async () => {
+    try {
+        reportStatus(`Deleting container "${containerName}"...`);
+        await containerClient.delete();
+        reportStatus(`Done.`);
+    } catch (error) {
+        reportStatus(error.message);
+    }
+};
+
+createContainerButton.addEventListener("click", createContainer);
+deleteContainerButton.addEventListener("click", deleteContainer);
+
+const listFiles = async () => {
+    fileList.size = 0;
+    fileList.innerHTML = "";
+    try {
+        reportStatus("Retrieving file list...");
+        let iter = containerClient.listBlobsFlat();
+        let blobItem = await iter.next();
+        while (!blobItem.done) {
+            fileList.size += 1;
+            fileList.innerHTML += `<option>${blobItem.value.name}</option>`;
+            blobItem = await iter.next();
+        }
+        if (fileList.size > 0) {
+            reportStatus("Done.");
+        } else {
+            reportStatus("The container does not contain any files.");
+        }
+    } catch (error) {
+        reportStatus(error.message);
+    }
+};
+
+listButton.addEventListener("click", listFiles);
+
 
 //
 // end globals
