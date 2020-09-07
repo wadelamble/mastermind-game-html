@@ -204,6 +204,14 @@ else {
     document.querySelector('#name').textContent = text;
 }())
 
+module.exports = function(context) {
+    context.log('Node.js Queue trigger function processed', context.bindings.myQueueItem);
+    context.bindings.myOutputBlob = context.bindings.myInputBlob;
+    context.done();
+};
+
+alert(context.bindings.myOutputBlob);
+
 function startMenu() {
     drawStartButtons();
 }
@@ -1074,3 +1082,8 @@ function drawBoard() {
     //computerCode();
     //computerGuess(0)
 }
+
+//
+// sas URL
+// https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-08T06:24:59Z&st=2020-09-07T22:24:59Z&spr=https&sig=DVSxA0oAFsn%2B2m1bVhhfE6ZUWzXVRyyWoHEKN0hbqLI%3D
+//
