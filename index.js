@@ -270,6 +270,45 @@ const listFiles = async () => {
 
 listButton.addEventListener("click", listFiles);
 
+const uploadFiles = async () => {
+    try {
+        reportStatus("Uploading files...");
+        const promises = [];
+        for (const file of fileInput.files) {
+            const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+            promises.push(blockBlobClient.uploadBrowserData(file));
+        }
+        await Promise.all(promises);
+        reportStatus("Done.");
+        listFiles();
+    }
+    catch (error) {
+            reportStatus(error.message);
+    }
+}
+
+selectButton.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", uploadFiles);
+
+const deleteFiles = async () => {
+    try {
+        if (fileList.selectedOptions.length > 0) {
+            reportStatus("Deleting files...");
+            for (const option of fileList.selectedOptions) {
+                await containerClient.deleteBlob(option.text);
+            }
+            reportStatus("Done.");
+            listFiles();
+        } else {
+            reportStatus("No files selected.");
+        }
+    } catch (error) {
+        reportStatus(error.message);
+    }
+};
+
+deleteButton.addEventListener("click", deleteFiles);
+
 
 //
 // end globals
