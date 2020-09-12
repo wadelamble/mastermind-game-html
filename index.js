@@ -196,7 +196,7 @@ else {
 }
 
 //azure blob storage globals
-
+testing = 0
 
 
 
@@ -228,16 +228,15 @@ function setupBlobs() {
     const { BlobServiceClient } = require("@azure/storage-blob");
     const createContainerButton = document.getElementById("create-container-button");
     const deleteContainerButton = document.getElementById("delete-container-button");
-    const selectButton = document.getElementById("select-button");
-    const fileInput = document.getElementById("file-input");
-    const listButton = document.getElementById("list-button");
+    const uploadButton = document.getElementById("upload-button")
     const deleteButton = document.getElementById("delete-button");
+    const downloadButton = document.getElementById("download-button")
     const status = document.getElementById("status");
     const fileList = document.getElementById("file-list");
 
     // Update <placeholder> with your Blob service SAS URL string
     const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
-    
+
 
     // Create a new BlobServiceClient
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
@@ -317,6 +316,46 @@ function setupBlobs() {
         }
     }
 
+    const uploadVar = async () => {
+        try {
+            reportStatus("Uploading var");
+            const blockBlobClient = containerClient.getBlockBlobClient("testBlob");
+            testing_str = JSON.stringify(testing);
+            const uploadBlobResponse = await blockBlobClient.upload(testing_str, testing_str.length);
+            reportStatus("Done.")
+
+        }
+        catch (error) {
+            reportStatus(error.message);
+        }
+    }
+
+    const downloadBlob = async () => {
+        // Get blob content from position 0 to the end
+        // In browsers, get downloaded data by accessing downloadBlockBlobResponse.blobBody
+        reportStatus("downloading...")
+        const blobClient = containerClient.getBlobClient("testBlob");
+        const downloadBlockBlobResponse = await blobClient.download();
+        const downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
+        testing = JSON.parse(downloaded);
+        reportStatus("downloaded.");
+        reportStatus(testing);
+        reportStatus("adding one...");
+        testing += 1;
+        reportStatus(testing);
+
+        // [Browsers only] A helper method used to convert a browser Blob into string.
+        async function blobToString(blob)  {
+            const fileReader = new FileReader();
+            return new Promise((resolve, reject) => {
+              fileReader.onloadend = (ev) => {
+                resolve(ev.target.result);
+              };
+              fileReader.onerror = reject;
+              fileReader.readAsText(blob);
+            });
+          }
+    }
 
 
     const deleteFiles = async () => {
@@ -339,19 +378,10 @@ function setupBlobs() {
     createContainerButton.addEventListener("click", createContainer);
     deleteContainerButton.addEventListener("click", deleteContainer);
 
-    listButton.addEventListener("click", listFiles);
-
-    selectButton.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", uploadFiles);
+    uploadButton.addEventListener("click", uploadVar);
 
     deleteButton.addEventListener("click", deleteFiles);
-
-    
-
-    
-    
-
-
+    downloadButton.addEventListener("click", downloadBlob);
 
 }
 var myGameArea = {
