@@ -194,7 +194,7 @@ else {
     uploadStats();
     //show stats here
 }
-
+/*
 //azure blob storage globals
 const { BlobServiceClient } = require("@azure/storage-blob");
 const createContainerButton = document.getElementById("create-container-button");
@@ -309,20 +309,21 @@ const deleteFiles = async () => {
 
 deleteButton.addEventListener("click", deleteFiles);
 
+*/
 
 //
 // end globals
 //
 
-function startMenu() {
+window.startMenu = function startMenu() {
     drawStartButtons();
 }
 
-function startGame() {
+window.startGame = function startGame() {
     myGameArea.start();
 }
 
-function startStatPage() {
+window.startStatPage = function startStatPage() {
     //getStats();
     document.getElementById("gamesPlayed").innerHTML = "Games played: " + userStats.gamesPlayed;
     document.getElementById("gamesWon").innerHTML = "Games won: " + userStats.gamesWon;
@@ -663,7 +664,7 @@ function whiteGradeButtonClick () {
     processGradeClick(whiteGradeButton.style.backgroundColor);
 }
 
-function mainButtonClick() {
+window.mainButtonClick = function mainButtonClick() {
     window.location.href = "index.html";
 }
 
@@ -757,12 +758,12 @@ function resetButtonClick() {
     myGameArea.reset()
 }
 
-function resetStatClick() {
+window.resetStatClick = function resetStatClick() {
     myGameArea.resetStats();
 }
 
 
-function settingsButtonClick() {
+window.settingsButtonClick = function settingsButtonClick() {
     alert("coming soon")
 }
 
