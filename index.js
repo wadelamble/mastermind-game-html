@@ -1,6 +1,8 @@
 //
-// Globals -- eek so many, what's the right pattern here?
+// Globals
 //
+const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2021-09-02T04:48:45Z&st=2020-09-13T20:48:45Z&spr=https&sig=tSjrhu3vPRx8OjGHFsrj5Xc5jLfAqtjVXm8olr7l4AM%3D";
+
 var myGamePiece;
 
 /*const screenSize = {
@@ -188,9 +190,6 @@ var userStats = {
     timesVisited: 0
 }
 
-
-var userName;
-
 //azure blob storage globals
 testing = 0
 
@@ -199,13 +198,16 @@ testing = 0
 //
 
 window.startMenu = function startMenu() {
-    if (!sessionStorage.getItem("test")) {
-        sessionStorage.setItem("test", "foo") 
+    if (!sessionStorage.getItem("newSessionStorage")) {
+        sessionStorage.setItem("newSessionStorage", "0000000") 
         helpButtonClick();
-        //this would be gotten from dad's thing
         currentUsername = window.prompt("Enter Player Name");
-        try {
+        sessionStorage.setItem("username", currentUsername);
+        //updateTimesVisited(currentUsername);
+        if (checkForBlobs("mw-mastermind-usernames", "usernames")) {
             usernameInfo = downloadFromBlob("mw-mastermind-usernames", "usernames")
+            alert(usernameInfo);
+            alert(JSON.parse(usernameInfo));
             if (JSON.parse(usernameInfo).includes(currentUsername)) {
                 //sign in
             }
@@ -213,15 +215,19 @@ window.startMenu = function startMenu() {
                 //create account
             }
         }
-        catch (error) {
+        else {
             usernameInfo = [currentUsername];
             UNIstr = JSON.stringify(usernameInfo)
             uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
+            alert("uploaded")
         }
-
-        userStats = getStats(currentUsername);
+        
+        //userStats = getStats(currentUsername);
+        
     }
-    updateTimesVisited(currentUsername);
+    else {
+        currentUsername = sessionStorage.getItem("username");
+    }
 }
 
 window.startGame = function startGame() {
@@ -278,9 +284,9 @@ function updateTimesVisited(currentUsername) {
 }
     
 const uploadToBlob = async (containerName, blobName, data) => {
-    const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
 
     // Create a new BlobServiceClient
+    const { BlobServiceClient } = require("@azure/storage-blob");
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
     // Get a container client from the BlobServiceClient
     const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -291,9 +297,8 @@ const uploadToBlob = async (containerName, blobName, data) => {
 }
 
 const downloadFromBlob = async (containerName, blobName) => {
-    const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
-
     // Create a new BlobServiceClient
+    const { BlobServiceClient } = require("@azure/storage-blob");
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
     // Get a container client from the BlobServiceClient
     const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -302,7 +307,9 @@ const downloadFromBlob = async (containerName, blobName) => {
     const blobClient = containerClient.getBlobClient(blobName);
     const downloadBlockBlobResponse = await blobClient.download();
 
-    await blobToString(await downloadBlockBlobResponse.blobBody);
+    downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
+
+    alert("downloaded" + downloaded);
 
     return downloaded;
 
@@ -320,14 +327,30 @@ const downloadFromBlob = async (containerName, blobName) => {
 }
 
 const deleteBlob = async (containerName, blobName) => {
-    const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
-
     // Create a new BlobServiceClient
+    const { BlobServiceClient } = require("@azure/storage-blob");
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
     // Get a container client from the BlobServiceClient
     const containerClient = blobServiceClient.getContainerClient(containerName);
 
-    await containerClient.deleteBlob(option.text);
+    await containerClient.deleteBlob(blobName);
+}
+
+const checkForBlobs = async (containerName, blobName) => {
+    const { BlobServiceClient } = require("@azure/storage-blob");
+    const blobServiceClient = new BlobServiceClient(blobSasUrl);
+    // Get a container client from the BlobServiceClient
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    let iter = containerClient.listBlobsFlat();
+    let blobItem = await iter.next();
+    while (!blobItem.done) {
+        if (blobItem.value.name === blobName) {
+            return true;
+        }
+        blobItem = await iter.next();
+    }
+    return false;
 }
 
 var myGameArea = {
