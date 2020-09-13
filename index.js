@@ -197,32 +197,33 @@ testing = 0
 // end globals
 //
 
-window.startMenu = function startMenu() {
+window.startMenu = async function startMenu() {
     if (!sessionStorage.getItem("newSessionStorage")) {
         sessionStorage.setItem("newSessionStorage", "0000000") 
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
         sessionStorage.setItem("username", currentUsername);
         //updateTimesVisited(currentUsername);
-        if (checkForBlobs("mw-mastermind-usernames", "usernames")) {
-            usernameInfo = downloadFromBlob("mw-mastermind-usernames", "usernames")
-            alert(usernameInfo);
-            alert(JSON.parse(usernameInfo));
-            if (JSON.parse(usernameInfo).includes(currentUsername)) {
-                //sign in
+        blobExists = await checkForBlobs("mw-mastermind-usernames", "usernames")
+        if (blobExists) {
+            usernameInfo = await downloadFromBlob("mw-mastermind-usernames", "usernames");
+            if (usernameInfo.includes(currentUsername)) {
+                userStats = getStats(currentUsername);
             }
             else {
-                //create account
+                usernameInfo.push(currentUsername);
+                usernameStr = JSON.stringify(usernameInfo);
+                uploadToBlob("mw-mastermind-usernames", "usernames", usernameStr);
+                startStats(currentUsername);
             }
         }
         else {
             usernameInfo = [currentUsername];
             UNIstr = JSON.stringify(usernameInfo)
             uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
-            alert("uploaded")
+            startStats(currentUsername);
         }
         
-        //userStats = getStats(currentUsername);
         
     }
     else {
@@ -308,10 +309,9 @@ const downloadFromBlob = async (containerName, blobName) => {
     const downloadBlockBlobResponse = await blobClient.download();
 
     downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
+    thing = JSON.parse(downloaded);
 
-    alert("downloaded" + downloaded);
-
-    return downloaded;
+    return thing;
 
     async function blobToString(blob)  {
         const fileReader = new FileReader();
@@ -343,12 +343,10 @@ const checkForBlobs = async (containerName, blobName) => {
     const containerClient = blobServiceClient.getContainerClient(containerName);
 
     let iter = containerClient.listBlobsFlat();
-    let blobItem = await iter.next();
-    while (!blobItem.done) {
-        if (blobItem.value.name === blobName) {
+    for await (const blob of iter) {
+        if (blob.name === blobName) {
             return true;
         }
-        blobItem = await iter.next();
     }
     return false;
 }
@@ -994,7 +992,7 @@ function loseScreen() {
 function uploadStats(currentUsername) {
     statsStr = JSON.stringify(userStats);
     containerName = "mw-mastermind-stats";
-    //uploadToBlob(containerName, currentUsername, statsStr);
+    uploadToBlob(containerName, currentUsername, statsStr);
 }
 
 function getStats(currentUsername) {
