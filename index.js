@@ -198,13 +198,30 @@ else {
 //azure blob storage globals
 testing = 0
 
-
+var userName;
 
 //
 // end globals
 //
 
 window.startMenu = function startMenu() {
+    if (1) {
+        userName = window.prompt("Enter Player Name");
+    }
+
+    /*var userDiv = document.createElement('div');
+    userDiv.innerHTML = `
+    <label for="fname">First name:</label>
+    <input type="text" id="fname" name="fname"><br><br>
+    <label for="lname">Last name:</label>
+    <input type="text" id="lname" name="lname"><br><br>
+    <input type="submit" value="Submit">
+    `;
+    var startButtonElement = document.getElementById("startButtons");  
+    startButtonElement.insertBefore(userDiv, startButtonElement.childNodes[0]);
+    
+    //document.getElementById('startButtons').appendChild(userDiv);
+    //document.body.appendChild(userDiv);*/
     drawStartButtons();
     setupBlobs();
 }

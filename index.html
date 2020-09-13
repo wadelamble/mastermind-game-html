@@ -6,9 +6,6 @@
 <link rel="icon" type="image/png" href="mastermind icon.png">
 </head>
 <body onload="startMenu()">
-    <main>
-        <p>Loading content from the API: <b id="name">...</b></p>
-    </main>
     <h1 id='title'>MASTERMIND</h1>
     <div id="startButtons">
         <button id="Play" class="playButton" onclick="window.location.href='play.html'" type="button">Play</button>
@@ -17,11 +14,12 @@
     </div>
     <button id="create-container-button">Create container</button>
     <button id="delete-container-button">Delete container</button>
-    <button id="upload-button">Upload Var</button>
+    <button id="select-button">Select and upload files</button>
+    <input type="file" id="file-input" multiple style="display: none;" />
+    <button id="list-button">List files</button>
     <button id="delete-button">Delete selected files</button>
-    <button id="download-button">Download</button>
     <p><b>Status:</b></p>
-    <p id="status" style="height:160px; width: 593px; overflow: scroll; color: white;" />
+    <p id="status" style="height:160px; width: 593px; overflow: scroll;" />
     <p><b>Files:</b></p>
     <select id="file-list" multiple style="height:222px; width: 593px; overflow: scroll;" />
     
