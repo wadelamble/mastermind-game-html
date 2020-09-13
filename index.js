@@ -168,62 +168,60 @@ for (i=0; i<6; i++) {
 }
 
 var temp = 0
+var currentUsername;
 
-if (!localStorage.getItem("1")) {
-    localStorage.setItem("1", "test") 
-    var newUser = true;
-    helpButtonClick();
-    var userStats = {
-        timesVisited: 0,
-        gamesPlayed: 0,
-        gamesWon: 0,
-        averageTries: 0,
-        winRate: 0,
-        highScore: 0,
-    }
-    startStats();
+var overallStats = {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    winRate: 0,
+    averageTries: 0,
+    highScore: 0,
+    timesVisited: 0
 }
-else {
-    var newUser = false
-    getStats();
-    //alert("Welcome back!")
-    //oh i think this resets if they switch between html pages
-    //idk how to fix, shouldn't be too bad tho
-    currentTV = userStats.timesVisited
-    userStats.timesVisited = (currentTV + 1);
-    uploadStats();
-    //show stats here
+
+var userStats = {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    winRate: 0,
+    averageTries: 0,
+    highScore: 0,
+    timesVisited: 0
 }
+
+
+var userName;
 
 //azure blob storage globals
 testing = 0
-
-var userName;
 
 //
 // end globals
 //
 
 window.startMenu = function startMenu() {
-    if (1) {
-        userName = window.prompt("Enter Player Name");
-    }
+    if (!sessionStorage.getItem("test")) {
+        sessionStorage.setItem("test", "foo") 
+        helpButtonClick();
+        //this would be gotten from dad's thing
+        currentUsername = window.prompt("Enter Player Name");
+        try {
+            usernameInfo = downloadFromBlob("mw-mastermind-usernames", "usernames")
+            if (JSON.parse(usernameInfo).includes(currentUsername)) {
+                //sign in
+            }
+            else {
+                //create account
+            }
+        }
+        catch (error) {
+            usernameInfo = [currentUsername];
+            UNIstr = JSON.stringify(usernameInfo)
+            uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
+        }
 
-    /*var userDiv = document.createElement('div');
-    userDiv.innerHTML = `
-    <label for="fname">First name:</label>
-    <input type="text" id="fname" name="fname"><br><br>
-    <label for="lname">Last name:</label>
-    <input type="text" id="lname" name="lname"><br><br>
-    <input type="submit" value="Submit">
-    `;
-    var startButtonElement = document.getElementById("startButtons");  
-    startButtonElement.insertBefore(userDiv, startButtonElement.childNodes[0]);
-    
-    //document.getElementById('startButtons').appendChild(userDiv);
-    //document.body.appendChild(userDiv);*/
-    drawStartButtons();
-    setupBlobs();
+        userStats = getStats(currentUsername);
+    }
+    updateTimesVisited(currentUsername);
 }
 
 window.startGame = function startGame() {
@@ -241,166 +239,97 @@ window.startStatPage = function startStatPage() {
     //document.getElementById("timesVisited").innerHTML = "Times you've visited this site: " + userStats.timesVisited;
 }
 
-function setupBlobs() {
-    const { BlobServiceClient } = require("@azure/storage-blob");
-    const createContainerButton = document.getElementById("create-container-button");
-    const deleteContainerButton = document.getElementById("delete-container-button");
-    const uploadButton = document.getElementById("upload-button")
-    const deleteButton = document.getElementById("delete-button");
-    const downloadButton = document.getElementById("download-button")
-    const status = document.getElementById("status");
-    const fileList = document.getElementById("file-list");
+window.overallStatPage = function overallStatPage() {
+    overallStats = downloadFromBlob("mw-mastermind-usernames", "overallStats");
+    overallStats = JSON.parse(overallStats);
+    document.getElementById("gamesPlayed").innerHTML = "Most games played: " + overallStats.gamesPlayed;
+    document.getElementById("gamesWon").innerHTML = "Most games won: " + overallStats.gamesWon;
+    document.getElementById("winRate").innerHTML = "Highest win Rate: " + overallStats.winRate + "%";
+    document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries;
+    document.getElementById("highScore").innerHTML = "Lowest high score (least number of guessses): " + overallStats.highScore;
+}
 
-    // Update <placeholder> with your Blob service SAS URL string
+function updateTimesVisited(currentUsername) {
+    getStats(currentUsername);
+    currentTV = userStats.timesVisited
+    userStats.timesVisited = (currentTV + 1);
+    uploadStats(currentUsername);
+    containerName = "mw-mastermind-usernames"
+    try {
+        overallStats = downloadFromBlob(containerName, "overallStats")
+        overallStats = JSON.parse(overallStats);
+        overallStats.timesVisited += 1;
+        overallStatsStr = JSON.stringify(overallStats);
+        //uploadToBlob("mw-mastermind-usernames", "overallStats", overallStatsStr);
+    }
+    catch (error) {
+        overallStats = {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            winRate: 0,
+            averageTries: 10,
+            highScore: 0,
+            timesVisited: 1
+        }
+        overallStatsStr = JSON.stringify(overallStats);
+        //uploadToBlob("mw-mastermind-usernames", "overallStats", overallStatsStr)
+    }
+
+}
+    
+const uploadToBlob = async (containerName, blobName, data) => {
     const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
-
 
     // Create a new BlobServiceClient
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
-
-    // Create a unique name for the container by 
-    // appending the current time to the file name
-    const containerName = "mw-mastermind-blob-container-random"
-
     // Get a container client from the BlobServiceClient
     const containerClient = blobServiceClient.getContainerClient(containerName);
 
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    
+    await blockBlobClient.upload(data, data.length);
+}
 
-    const reportStatus = message => {
-        status.innerHTML += `${message}<br/>`;
-        status.scrollTop = status.scrollHeight;
-    }
+const downloadFromBlob = async (containerName, blobName) => {
+    const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
 
-    const createContainer = async () => {
-        try {
-            reportStatus(`Creating container "${containerName}"...`);
-            await containerClient.create();
-            reportStatus(`Done.`);
-        } catch (error) {
-            reportStatus(error.message);
-        }
-    };
+    // Create a new BlobServiceClient
+    const blobServiceClient = new BlobServiceClient(blobSasUrl);
+    // Get a container client from the BlobServiceClient
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    const deleteContainer = async () => {
-        try {
-            reportStatus(`Deleting container "${containerName}"...`);
-            await containerClient.delete();
-            reportStatus(`Done.`);
-        } catch (error) {
-            reportStatus(error.message);
-        }
-    };
+    const blobClient = containerClient.getBlobClient(blobName);
+    const downloadBlockBlobResponse = await blobClient.download();
 
+    await blobToString(await downloadBlockBlobResponse.blobBody);
 
+    return downloaded;
 
-    const listFiles = async () => {
-        fileList.size = 0;
-        fileList.innerHTML = "";
-        try {
-            reportStatus("Retrieving file list...");
-            let iter = containerClient.listBlobsFlat();
-            let blobItem = await iter.next();
-            while (!blobItem.done) {
-                fileList.size += 1;
-                fileList.innerHTML += `<option>${blobItem.value.name}</option>`;
-                blobItem = await iter.next();
-            }
-            if (fileList.size > 0) {
-                reportStatus("Done.");
-            } else {
-                reportStatus("The container does not contain any files.");
-            }
-        } catch (error) {
-            reportStatus(error.message);
-        }
-    };
-
-
-    const uploadFiles = async () => {
-        try {
-            reportStatus("Uploading files...");
-            const promises = [];
-            for (const file of fileInput.files) {
-                const blockBlobClient = containerClient.getBlockBlobClient(file.name);
-                promises.push(blockBlobClient.uploadBrowserData(file));
-            }
-            await Promise.all(promises);
-            reportStatus("Done.");
-            listFiles();
-        }
-        catch (error) {
-                reportStatus(error.message);
-        }
-    }
-
-    const uploadVar = async () => {
-        try {
-            reportStatus("Uploading var");
-            const blockBlobClient = containerClient.getBlockBlobClient("testBlob");
-            testing_str = JSON.stringify(testing);
-            const uploadBlobResponse = await blockBlobClient.upload(testing_str, testing_str.length);
-            reportStatus("Done.")
-
-        }
-        catch (error) {
-            reportStatus(error.message);
-        }
-    }
-
-    const downloadBlob = async () => {
-        // Get blob content from position 0 to the end
-        // In browsers, get downloaded data by accessing downloadBlockBlobResponse.blobBody
-        reportStatus("downloading...")
-        const blobClient = containerClient.getBlobClient("testBlob");
-        const downloadBlockBlobResponse = await blobClient.download();
-        const downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
-        testing = JSON.parse(downloaded);
-        reportStatus("downloaded.");
-        reportStatus(testing);
-        reportStatus("adding one...");
-        testing += 1;
-        reportStatus(testing);
-
-        // [Browsers only] A helper method used to convert a browser Blob into string.
-        async function blobToString(blob)  {
-            const fileReader = new FileReader();
-            return new Promise((resolve, reject) => {
-              fileReader.onloadend = (ev) => {
-                resolve(ev.target.result);
-              };
-              fileReader.onerror = reject;
-              fileReader.readAsText(blob);
-            });
-          }
-    }
-
-
-    const deleteFiles = async () => {
-        try {
-            if (fileList.selectedOptions.length > 0) {
-                reportStatus("Deleting files...");
-                for (const option of fileList.selectedOptions) {
-                    await containerClient.deleteBlob(option.text);
-                }
-                reportStatus("Done.");
-                listFiles();
-            } else {
-                reportStatus("No files selected.");
-            }
-        } catch (error) {
-            reportStatus(error.message);
-        }
-    };
-
-    createContainerButton.addEventListener("click", createContainer);
-    deleteContainerButton.addEventListener("click", deleteContainer);
-
-    uploadButton.addEventListener("click", uploadVar);
-
-    deleteButton.addEventListener("click", deleteFiles);
-    downloadButton.addEventListener("click", downloadBlob);
+    async function blobToString(blob)  {
+        const fileReader = new FileReader();
+        return new Promise((resolve, reject) => {
+          fileReader.onloadend = (ev) => {
+            resolve(ev.target.result);
+          };
+          fileReader.onerror = reject;
+          fileReader.readAsText(blob);
+        });
+      }
 
 }
+
+const deleteBlob = async (containerName, blobName) => {
+    const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-13T04:53:53Z&st=2020-09-12T20:53:53Z&spr=https,http&sig=0cR8UDG1GAFpT2ig%2FMj%2Bmu2I0yVMfl21U1RgLVKWjpg%3D";
+
+    // Create a new BlobServiceClient
+    const blobServiceClient = new BlobServiceClient(blobSasUrl);
+    // Get a container client from the BlobServiceClient
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    await containerClient.deleteBlob(option.text);
+}
+
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
@@ -501,7 +430,7 @@ var myGameArea = {
     },
     resetStats: function() {
         if (confirm("Are you sure you want to reset your statistics?")) {
-            startStats();
+            startStats(currentUsername);
             startStatPage();
         }
     }
@@ -1035,31 +964,37 @@ function loseScreen() {
         for (j=0; j<4; j++) {
             drawGuessCircle(j + 1, 0, code[j]);
         }
-    }, 1000)
+    }, 1000);
     //alert("drew real code")
 }
 
-function uploadStats() {
-    statsStr = JSON.stringify(userStats)
-    localStorage.setItem('stats', statsStr);
+function uploadStats(currentUsername) {
+    statsStr = JSON.stringify(userStats);
+    containerName = "mw-mastermind-stats";
+    //uploadToBlob(containerName, currentUsername, statsStr);
 }
 
-function getStats() {
-    statsStr = localStorage.getItem('stats');
-    userStats = JSON.parse(statsStr);
-    if (userStats == null) {
-        alert("Error 123: Coding fail")
+function getStats(currentUsername) {
+    containerName = "mw-mastermind-stats";
+    try {
+    statsStr = downloadFromBlob(containerName, currentUsername)
     }
+    catch (error) {
+        startStats(currentUsername);
+    }
+    //userStats = JSON.parse(statsStr);
 }
 
-function startStats() {
-    userStats.highScore = 10;
-    userStats.gamesPlayed = 0;
-    userStats.gamesWon = 0;
-    userStats.winRate = 0;
-    userStats.averageTries = 0;
-    userStats.timesVisited = 1;
-    uploadStats();
+function startStats(currentUsername) {
+    var userStats = {
+        highScore: 10,
+        gamesPlayed: 0,
+        gamesWon: 0,
+        winRate: 0,
+        averageTries: 0,
+        timesVisited: 1
+    }
+    uploadStats(currentUsername);
 }
 
 function setStats(won, score) {
@@ -1216,7 +1151,8 @@ function drawBoard() {
         this.y = i * screenSize.height / numRows;
         if (!(skip_lines.includes(i))) {
             rectangle(screenSize.width - sideBarWidth, 1, "black", 0, this.y);
-        } else {
+        } 
+        else {
             rectangle(screenSize.width, 1, "black", 0, this.y);
         }
     }
@@ -1253,7 +1189,3 @@ function drawBoard() {
     //computerGuess(0)
 }
 
-//
-// sas URL
-// https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-08T06:24:59Z&st=2020-09-07T22:24:59Z&spr=https&sig=DVSxA0oAFsn%2B2m1bVhhfE6ZUWzXVRyyWoHEKN0hbqLI%3D
-//
