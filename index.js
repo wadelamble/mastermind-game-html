@@ -168,16 +168,13 @@ for (i=0; i<6; i++) {
         }
     }
 }
-
-var temp = 0
-var currentUsername;
+var temp = 0;
+var currentUsername = "bob";
 
 var overallStats = {
     gamesPlayed: 0,
-    gamesWon: 0,
-    winRate: 0,
-    averageTries: 0,
-    highScore: 0,
+    averageTries: 10,
+    highScore: 10,
     timesVisited: 0
 }
 
@@ -203,12 +200,11 @@ window.startMenu = async function startMenu() {
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
         sessionStorage.setItem("username", currentUsername);
-        //updateTimesVisited(currentUsername);
         blobExists = await checkForBlobs("mw-mastermind-usernames", "usernames")
         if (blobExists) {
             usernameInfo = await downloadFromBlob("mw-mastermind-usernames", "usernames");
             if (usernameInfo.includes(currentUsername)) {
-                userStats = getStats(currentUsername);
+                userStats = getUserStats(currentUsername);
             }
             else {
                 usernameInfo.push(currentUsername);
@@ -223,20 +219,27 @@ window.startMenu = async function startMenu() {
             uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
             startStats(currentUsername);
         }
-        
-        
     }
     else {
         currentUsername = sessionStorage.getItem("username");
     }
+
+    if (! await checkForBlobs("mw-mastermind-usernames", "overallStats")) {
+        //create
+        uploadOverallStats();
+        alert("uploaded")
+    }
+    //todo update times visited 
 }
 
+
 window.startGame = function startGame() {
+    currentUsername = sessionStorage.getItem("username");
     myGameArea.start();
 }
 
-window.startStatPage = function startStatPage() {
-    //getStats();
+window.startStatPage = async function startStatPage() {
+    getUserStats();
     document.getElementById("gamesPlayed").innerHTML = "Games played: " + userStats.gamesPlayed;
     document.getElementById("gamesWon").innerHTML = "Games won: " + userStats.gamesWon;
     document.getElementById("winRate").innerHTML = "Win Rate: " + userStats.winRate + "%";
@@ -246,25 +249,21 @@ window.startStatPage = function startStatPage() {
     //document.getElementById("timesVisited").innerHTML = "Times you've visited this site: " + userStats.timesVisited;
 }
 
-window.overallStatPage = function overallStatPage() {
-    overallStats = downloadFromBlob("mw-mastermind-usernames", "overallStats");
-    overallStats = JSON.parse(overallStats);
+window.overallStatPage = async function overallStatPage() {
+    await getOverallStats();
     document.getElementById("gamesPlayed").innerHTML = "Most games played: " + overallStats.gamesPlayed;
-    document.getElementById("gamesWon").innerHTML = "Most games won: " + overallStats.gamesWon;
-    document.getElementById("winRate").innerHTML = "Highest win Rate: " + overallStats.winRate + "%";
     document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries;
     document.getElementById("highScore").innerHTML = "Lowest high score (least number of guessses): " + overallStats.highScore;
+    document.getElementById("timesVisited").innerHTML = "Total times visited: " + overallStats.timesVisited;
 }
 
-function updateTimesVisited(currentUsername) {
-    getStats(currentUsername);
+async function updateTimesVisited(currentUsername) {
+    getUserStats(currentUsername);
     currentTV = userStats.timesVisited
     userStats.timesVisited = (currentTV + 1);
-    uploadStats(currentUsername);
-    containerName = "mw-mastermind-usernames"
+    uploadUserStats(currentUsername);
     try {
-        overallStats = downloadFromBlob(containerName, "overallStats")
-        overallStats = JSON.parse(overallStats);
+        getOverallStats();
         overallStats.timesVisited += 1;
         overallStatsStr = JSON.stringify(overallStats);
         //uploadToBlob("mw-mastermind-usernames", "overallStats", overallStatsStr);
@@ -272,8 +271,6 @@ function updateTimesVisited(currentUsername) {
     catch (error) {
         overallStats = {
             gamesPlayed: 0,
-            gamesWon: 0,
-            winRate: 0,
             averageTries: 10,
             highScore: 0,
             timesVisited: 1
@@ -309,9 +306,7 @@ const downloadFromBlob = async (containerName, blobName) => {
     const downloadBlockBlobResponse = await blobClient.download();
 
     downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
-    thing = JSON.parse(downloaded);
-
-    return thing;
+    return downloaded;
 
     async function blobToString(blob)  {
         const fileReader = new FileReader();
@@ -341,7 +336,7 @@ const checkForBlobs = async (containerName, blobName) => {
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
     // Get a container client from the BlobServiceClient
     const containerClient = blobServiceClient.getContainerClient(containerName);
-
+    
     let iter = containerClient.listBlobsFlat();
     for await (const blob of iter) {
         if (blob.name === blobName) {
@@ -785,7 +780,7 @@ window.settingsButtonClick = function settingsButtonClick() {
 }
 
 
-function processClick(color) {
+async function processClick(color) {
     if (mode.value === mode.codeBreaker) {
         getClickIndex();
         drawGuessCircle(element.x, element.y, color);
@@ -810,7 +805,7 @@ function processClick(color) {
             }
             
             if (grade.reds === 4) {
-                newHighScore = setStats(true, element.y);
+                newHighScore = await setStats(true, element.y);
                 winScreen();
                 setTimeout(function() {
                     msg = "Congratulations, you won! \n";
@@ -837,7 +832,7 @@ function processClick(color) {
                 
             }
             else if (element.y === 10) {
-                setStats(false, 10);
+                await setStats(false, 10);
                 loseScreen();
                 setTimeout(function() {
                     alert("Nice try :(");
@@ -939,7 +934,6 @@ function drawGradeCircle(x_loc, y_loc, color) {
 }
 
 
-
 function winScreen() {
     var mode = 0;
     var flashing = setInterval(flash, 100);
@@ -989,21 +983,16 @@ function loseScreen() {
     //alert("drew real code")
 }
 
-function uploadStats(currentUsername) {
+async function uploadUserStats(currentUsername) {
     statsStr = JSON.stringify(userStats);
     containerName = "mw-mastermind-stats";
-    uploadToBlob(containerName, currentUsername, statsStr);
+    await uploadToBlob(containerName, currentUsername, statsStr);
 }
 
-function getStats(currentUsername) {
+async function getUserStats(currentUsername) {
     containerName = "mw-mastermind-stats";
-    try {
-    statsStr = downloadFromBlob(containerName, currentUsername)
-    }
-    catch (error) {
-        startStats(currentUsername);
-    }
-    //userStats = JSON.parse(statsStr);
+    statsStr = await downloadFromBlob(containerName, currentUsername)
+    userStats = JSON.parse(statsStr);
 }
 
 function startStats(currentUsername) {
@@ -1015,36 +1004,64 @@ function startStats(currentUsername) {
         averageTries: 0,
         timesVisited: 1
     }
-    uploadStats(currentUsername);
+    uploadUserStats(currentUsername);
 }
 
-function setStats(won, score) {
-    getStats();
+async function getOverallStats() {
+    containerName = "mw-mastermind-usernames";
+    statsStr = await downloadFromBlob(containerName, "overallstats")
+    overallStats = JSON.parse(statsStr);
+}
+
+async function uploadOverallStats() {
+    containerName = "mw-mastermind-usernames";
+    statsStr = JSON.stringify(overallStats);
+    await uploadToBlob(containerName, "overallstats", statsStr)
+    
+}
+
+
+async function setStats(won, score) {
+    alert("gu ");
+    alert("cunrentUser " + currentUsername);
+    getUserStats(currentUsername);
+    alert("go");
+    getOverallStats();
+    alert("user: " + userStats);
+    alert("overall: " + overallStats);
+
     if (score < userStats.highScore) {
         userStats.highScore = score;
         newHighScore = true;
+        if (score < overallStats.highScore) {
+            overallStats.highScore = score;
+        }
     }
     else {
         newHighScore = false;
     }
-    currentGP = userStats.gamesPlayed;
-    newGP = currentGP + 1;
-    userStats.gamesPlayed = newGP;
+
+    userStats.gamesPlayed++;
+    overallStats.gamesPlayed++;
     if (won) {
-        currentGW = userStats.gamesWon;
-        newGW = currentGW + 1;
-        userStats.gamesWon = newGW;
+        userStats.gamesWon++;
     }
-    newWR = Math.floor(newGW / newGP) * 100;
+    newWR = Math.floor(userStats.gamesWon / userStats.gamesPlayed) * 100;
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
-    currentTotalPoints = currentAT * currentGP;
+    currentTotalPoints = currentAT * userStats.gamesPlayed - 1;
     //alert(currentTotalPoints)
     newTotalPoints = currentTotalPoints + score;
     newAT = newTotalPoints / userStats.gamesPlayed;
     //alert(newAT)
     userStats.averageTries = newAT;
-    uploadStats();  
+    if (newAT > overallStats.averageTries) {
+        overallStats.averageTries = newAT
+    }
+
+    await uploadUserStats(currentUsername);  
+    await uploadOverallStats();
+    alert("uploadeduploaded");
     return newHighScore;
 }
 
@@ -1209,4 +1226,3 @@ function drawBoard() {
     //computerCode();
     //computerGuess(0)
 }
-
