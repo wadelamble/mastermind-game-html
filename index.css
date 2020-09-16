@@ -43,6 +43,7 @@ button {
     padding-top: 2.5%;
     padding-bottom: 2.5%;
     font-size: 4vw;
+    color: black;
 }
 
 #Settings {
@@ -62,25 +63,21 @@ button {
     margin-right: 30%;
 }
 h3 {
-    padding-top: 5%;
+    padding-top: 2.5%;
     color: black;
     text-align: center;
+    padding-bottom: 2.5%
     
 }
 
-#resetStats {
+.statsButton {
         background-color: navy;
         color: white;
         padding: 15px 32px;
         margin: auto;
 }
 
-#back {
-    background-color: navy;
-    color: white;
-    padding: 15px 32px;
-    margin: auto;
-}
+
 
 .container {
     height: 200px;

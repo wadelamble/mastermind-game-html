@@ -5,22 +5,24 @@
         <link rel="stylesheet" type="text/css" href="index.css">
         <link rel="icon" type="image/png" href="mastermind icon.png">
     </head>
-    <body onload="overallStatPage()">
+    <body onload="startStatPage()">
         <script src="index.js"></script>
         <h1>Statistics</h1>
         <div id="statsDiv">
+            <h3 id="timesVisited"></h3>
             <h3 id="highScore"></h3>
             <h3 id="averageTries"></h3>
-            <h3 id="winRate"></h3>
             <h3 id="gamesPlayed"></h3>
             <h3 id="gamesWon"></h3>
-            <h3 id="timesVisited"></h3>
+            <h3 id="winRate"></h3>
+            
             
         </div>
-        <div clss="container">
+        <div cls="container">
             <div class="center">
-                <button id="resetStats" onclick="resetStatClick()">Reset Statistics</button>
-                <button id="back" onclick="mainButtonClick()"><i class="arrow left"></i> Main Menu</button>
+                <button id="resetStats" class="statsButton" onclick="resetStatClick()">Reset Statistics</button>
+                <button id="switchStats" class="statsButton" onclick="switchStatClick()">Individual Stats</button>
+                <button id="back" class="statsButton" onclick="mainButtonClick()"><i class="arrow left"></i> Main Menu</button>
             </div>
         </div>
                 

@@ -30,13 +30,6 @@ var gradeBarWidth = sideBarWidth;
 var guessBarWidth = screenSize.width - sideBarWidth - gradeBarWidth;
 var numRows = 11;
 var buttonSize = sideBarWidth / 3;
-//this is only useful if it isn't a square
-/*
-if (buttonSize > ((screenSize.height / numRows) * 0.75)) {
-    alert("hi")
-    buttonSize = ((screenSize.height / numRows) * 0.75)
-}
-*/
 var gradeButtonSize = buttonSize * 0.6;
 var verticalOffsetOfCanvas = 10;
 var color_clicked = 'black';
@@ -187,6 +180,12 @@ var userStats = {
     timesVisited: 0
 }
 
+var statType = {
+    overall: "overallStats",
+    user: "individualStats",
+    value: "individualStats"
+}
+
 //azure blob storage globals
 testing = 0
 
@@ -209,16 +208,17 @@ window.startMenu = async function startMenu() {
             else {
                 usernameInfo.push(currentUsername);
                 usernameStr = JSON.stringify(usernameInfo);
-                uploadToBlob("mw-mastermind-usernames", "usernames", usernameStr);
-                startStats(currentUsername);
+                await uploadToBlob("mw-mastermind-usernames", "usernames", usernameStr);
+                await startStats(currentUsername);
             }
         }
         else {
             usernameInfo = [currentUsername];
             UNIstr = JSON.stringify(usernameInfo)
-            uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
-            startStats(currentUsername);
+            await uploadToBlob("mw-mastermind-usernames", "usernames", UNIstr)
+            await startStats(currentUsername);
         }
+        await updateTimesVisited(currentUsername); 
     }
     else {
         currentUsername = sessionStorage.getItem("username");
@@ -226,10 +226,8 @@ window.startMenu = async function startMenu() {
 
     if (! await checkForBlobs("mw-mastermind-usernames", "overallStats")) {
         //create
-        uploadOverallStats();
-        alert("uploaded")
+        await uploadOverallStats();
     }
-    //todo update times visited 
 }
 
 
@@ -239,45 +237,34 @@ window.startGame = function startGame() {
 }
 
 window.startStatPage = async function startStatPage() {
-    getUserStats();
+    currentUsername = sessionStorage.getItem("username");
+    await getUserStats(currentUsername);
     document.getElementById("gamesPlayed").innerHTML = "Games played: " + userStats.gamesPlayed;
+    document.getElementById("averageTries").innerHTML = "Average number of guesses: " + userStats.averageTries;
+    document.getElementById("highScore").innerHTML = "Best Score: " + userStats.highScore;
     document.getElementById("gamesWon").innerHTML = "Games won: " + userStats.gamesWon;
     document.getElementById("winRate").innerHTML = "Win Rate: " + userStats.winRate + "%";
-    document.getElementById("averageTries").innerHTML = "Average number of guesses: " + userStats.averageTries;
-    document.getElementById("highScore").innerHTML = "High score (least number of guessses): " + userStats.highScore;
-    //we can un-comment this out, i just don't think its necessary. its kinda cool for us to see
-    //document.getElementById("timesVisited").innerHTML = "Times you've visited this site: " + userStats.timesVisited;
+    document.getElementById("timesVisited").innerHTML = "Times visited: " +  userStats.timesVisited;
 }
 
 window.overallStatPage = async function overallStatPage() {
     await getOverallStats();
-    document.getElementById("gamesPlayed").innerHTML = "Most games played: " + overallStats.gamesPlayed;
+    document.getElementById("gamesWon").innerHTML = "";
+    document.getElementById("winRate").innerHTML = "";
+    document.getElementById("gamesPlayed").innerHTML = "Total games played, by everyone: " + overallStats.gamesPlayed;
     document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries;
-    document.getElementById("highScore").innerHTML = "Lowest high score (least number of guessses): " + overallStats.highScore;
-    document.getElementById("timesVisited").innerHTML = "Total times visited: " + overallStats.timesVisited;
+    document.getElementById("highScore").innerHTML = "Best score EVER: " + overallStats.highScore;
+    document.getElementById("timesVisited").innerHTML = "Total times visited, by everyone: " + overallStats.timesVisited;
 }
 
 async function updateTimesVisited(currentUsername) {
-    getUserStats(currentUsername);
+    await getUserStats(currentUsername);
     currentTV = userStats.timesVisited
     userStats.timesVisited = (currentTV + 1);
-    uploadUserStats(currentUsername);
-    try {
-        getOverallStats();
-        overallStats.timesVisited += 1;
-        overallStatsStr = JSON.stringify(overallStats);
-        //uploadToBlob("mw-mastermind-usernames", "overallStats", overallStatsStr);
-    }
-    catch (error) {
-        overallStats = {
-            gamesPlayed: 0,
-            averageTries: 10,
-            highScore: 0,
-            timesVisited: 1
-        }
-        overallStatsStr = JSON.stringify(overallStats);
-        //uploadToBlob("mw-mastermind-usernames", "overallStats", overallStatsStr)
-    }
+    await uploadUserStats(currentUsername);
+    await getOverallStats();
+    overallStats.timesVisited += 1;
+    await uploadOverallStats();
 
 }
     
@@ -444,9 +431,10 @@ var myGameArea = {
             }
         }
     },
-    resetStats: function() {
+    resetStats: async function() {
         if (confirm("Are you sure you want to reset your statistics?")) {
-            startStats(currentUsername);
+            await startStats(currentUsername);
+            await getUserStats(currentUsername);
             startStatPage();
         }
     }
@@ -455,23 +443,6 @@ var myGameArea = {
 
 }
 
-function drawStartButtons() {
-    //var optionsDiv = document.getElementById("startButtons");
-    //optionsDiv.style.height = String(0.9 * screenSize.height) + 'px';
-    /*
-    var optionsDiv = document.getElementById("Play");
-    optionsDiv.style.top = String(0.4 * screenSize.height) + 'px';
-    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
-    
-    var optionsDiv = document.getElementById("Stats");
-    optionsDiv.style.top = String(0.7 * screenSize.height) + 'px';
-    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
-    
-    var optionsDiv = document.getElementById("Settings");
-    optionsDiv.style.top = String(screenSize.height) + 'px';
-    optionsDiv.style.left = String(0.97 * screenSize.height) + 'px';
-    */
-}
 
 function drawGuessButtons() {
     var hOffset = verticalOffsetOfCanvas;
@@ -544,8 +515,6 @@ function drawHelpButton(button) {
     button.style.height = String((screenSize.height / numRows) - 1) + "px ";
     button.style.borderRadius = "0px";
     var wOffset = document.getElementById("board").offsetLeft;
-    //alert((guessBarWidth + gradeBarWidth) / 3)
-    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
@@ -564,8 +533,6 @@ function drawBackButton(button) {
     var baseWidth = document.getElementById("board").offsetLeft;
     var addedWidth = (guessBarWidth + gradeBarWidth) / 3;
     var wOffset = baseWidth + addedWidth;
-    //alert(addedWidth)
-    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
@@ -584,8 +551,6 @@ function drawResetButton(button) {
     var baseWidth = document.getElementById("board").offsetLeft;
     var addedWidth = ((guessBarWidth + gradeBarWidth) / 3);
     var wOffset = baseWidth + addedWidth * 2 + 1
-    //alert(addedWidth)
-    //wOffset += screenSize.width - (sideBarWidth / 2) - buttonSize / 2;
     wOffsetStr = wOffset + 'px';
     hOffsetStr = hOffset + 'px';
     button.style.top = hOffsetStr;
@@ -684,16 +649,12 @@ function doneButtonClick() {
     if (mode.value == mode.codeMaker && code != []) {
         for (index=0; index<10; index++) {
             row = guessMatrix[index]
-            //alert(row)
             if (row.includes('0')) {
                 gradeRow = index;
-                //alert("breaking")
                 break;
-            //alert(gradeRow)
             }
         }
     }
-    //alert(gradeRow)
     realGrade = [grade.reds, grade.whites]
     computerGrade(guessMatrix[gradeRow - 1], code)
     if ((grade.reds != realGrade[0]) || (grade.whites != realGrade[1])) {
@@ -770,10 +731,22 @@ function resetButtonClick() {
     myGameArea.reset()
 }
 
-window.resetStatClick = function resetStatClick() {
-    myGameArea.resetStats();
+window.resetStatClick = async function resetStatClick() {
+    await myGameArea.resetStats();
 }
 
+window.switchStatClick = async function switchStatClick() {
+    if (statType.value == statType.user) {
+        statType.value = statType.overall;
+        document.getElementById("switchStats").innerHTML = "Overall Stats";
+        overallStatPage();
+    }
+    else if (statType.value == statType.overall) {
+        statType.value = statType.user;
+        document.getElementById("switchStats").innerHTML = "Individual Stats";
+        startStatPage();
+    }
+}
 
 window.settingsButtonClick = function settingsButtonClick() {
     alert("coming soon")
@@ -973,14 +946,12 @@ function loseScreen() {
         }
         
     }
-    //alert("real code now...")
-    //alert(code)
+
     setTimeout(function() {
         for (j=0; j<4; j++) {
             drawGuessCircle(j + 1, 0, code[j]);
         }
     }, 1000);
-    //alert("drew real code")
 }
 
 async function uploadUserStats(currentUsername) {
@@ -995,8 +966,8 @@ async function getUserStats(currentUsername) {
     userStats = JSON.parse(statsStr);
 }
 
-function startStats(currentUsername) {
-    var userStats = {
+async function startStats(currentUsername) {
+    userStats = {
         highScore: 10,
         gamesPlayed: 0,
         gamesWon: 0,
@@ -1004,7 +975,7 @@ function startStats(currentUsername) {
         averageTries: 0,
         timesVisited: 1
     }
-    uploadUserStats(currentUsername);
+    await uploadUserStats(currentUsername);
 }
 
 async function getOverallStats() {
@@ -1022,14 +993,8 @@ async function uploadOverallStats() {
 
 
 async function setStats(won, score) {
-    alert("gu ");
-    alert("cunrentUser " + currentUsername);
-    getUserStats(currentUsername);
-    alert("go");
-    getOverallStats();
-    alert("user: " + userStats);
-    alert("overall: " + overallStats);
-
+    await getUserStats(currentUsername);
+    await getOverallStats();
     if (score < userStats.highScore) {
         userStats.highScore = score;
         newHighScore = true;
@@ -1046,22 +1011,19 @@ async function setStats(won, score) {
     if (won) {
         userStats.gamesWon++;
     }
-    newWR = Math.floor(userStats.gamesWon / userStats.gamesPlayed) * 100;
+    newWR = Math.floor((userStats.gamesWon / userStats.gamesPlayed) * 100);
     userStats.winRate = newWR;
     currentAT = userStats.averageTries;
-    currentTotalPoints = currentAT * userStats.gamesPlayed - 1;
-    //alert(currentTotalPoints)
+    currentTotalPoints = currentAT * (userStats.gamesPlayed - 1);
     newTotalPoints = currentTotalPoints + score;
-    newAT = newTotalPoints / userStats.gamesPlayed;
-    //alert(newAT)
+    newAT = Math.round(newTotalPoints / userStats.gamesPlayed);
     userStats.averageTries = newAT;
-    if (newAT > overallStats.averageTries) {
-        overallStats.averageTries = newAT
+    if (newAT < overallStats.averageTries) {
+        overallStats.averageTries = newAT;
     }
 
     await uploadUserStats(currentUsername);  
     await uploadOverallStats();
-    alert("uploadeduploaded");
     return newHighScore;
 }
 
@@ -1095,25 +1057,12 @@ function computerGrade(toBeGraded, code) {
 
 function removeCodes(posCodes, prevGuess) {
     var newPosCodes = [];
-    //alert("in remove codes");
-    //alert(length(posCodes));
     realGrade = [grade.reds, grade.whites];
     for (index = 0; index < posCodes.length; index++) {
-        //grade.reds = 0;
-        //grade.whites = 0;
-        //alert(index)
         posCode = posCodes[index];
         
-        //alert("grades");
-        //alert(realGrade[0]);
-        //alert(realGrade[1]);
         computerGrade(prevGuess, posCode);
-        //alert(prevGuess);
-        //alert(posCode);
-        //alert(grade.reds);
-        //alert(grade.whites);
         if ((grade.reds == realGrade[0]) && (grade.whites == realGrade[1])) {
-            //alert("idk what to sayyy");
             newPosCodes.push(posCode);
         }
     }
@@ -1133,27 +1082,15 @@ function computerGuess(gradeRow) {
         alert("Computer Wins!!!");
         myGameArea.reset();
         return;
-        
-        //end program
-        //idk how...
-        //dad's reset func?
     }
     else {
-        //alert("here")
-        //alert(guessMatrix[gradeRow - 1])
-        //alert(grade.reds + "," + grade.whites);
         posCodes = removeCodes(posCodes, guessMatrix[gradeRow - 1])
-        //alert(grade.reds + "," + grade.whites);
-        //alert(posCodes)
-        //this is just picking a random one, maybe change it
         len = posCodes.length;
         if (len === 0) {
             alert("hmm. check your work...")
         }
         guess = posCodes[len - 1]
     }
-    //alert("drawing...")
-    //alert(guess)
     for (index=0; index<4; index++) {
         drawGuessCircle(index + 1, gradeRow + 1, guess[index]);
     }
@@ -1166,18 +1103,10 @@ function computerGuess(gradeRow) {
 
 function computerCode() {
     code = []
-    //alert()
     for (i=0; i<4; i++) {
         code.push(colors[Math.floor(Math.random() * 6)]);
     }
-    //this displays it, which... it definitely shouldn't, 
-    //but lets leave it here while we are still working
-    /*
-    for (index=0; index<4; index++) {
-        color = code[index];
-        drawGuessCircle(index + 1, 0, color);
-    }
-    */
+    //alert(code)
 }
 
 
