@@ -168,7 +168,8 @@ var overallStats = {
     gamesPlayed: 0,
     averageTries: 10,
     highScore: 10,
-    timesVisited: 0
+    timesVisited: 0,
+    best: ["nobody, yet", "nobody, yet"]
 }
 
 var userStats = {
@@ -198,10 +199,16 @@ window.startMenu = async function startMenu() {
         sessionStorage.setItem("newSessionStorage", "0000000") 
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
+        if (currentUsername  === "resetOverallStats") {
+            if (confirm("Are you sure you want to reset overall stats")) {
+                await uploadOverallStats();
+            }
+        }
         sessionStorage.setItem("username", currentUsername);
         blobExists = await checkForBlobs("mw-mastermind-usernames", "usernames")
         if (blobExists) {
             usernameInfo = await downloadFromBlob("mw-mastermind-usernames", "usernames");
+            usernameInfo = JSON.parse(usernameInfo);
             if (usernameInfo.includes(currentUsername)) {
                 userStats = getUserStats(currentUsername);
             }
@@ -249,12 +256,24 @@ window.startStatPage = async function startStatPage() {
 
 window.overallStatPage = async function overallStatPage() {
     await getOverallStats();
+    if (overallStats.best == undefined) {
+        overallStats.best = ["n/a", "n/a"];
+        await uploadOverallStats();
+    }
+    bestATuser = overallStats.best[1];
+    bestScoreUser = overallStats.best[0];
+    
+    //idk if we need this but we might want it later
+    bestATStats = getUserStats(bestATuser);
+    bestScoreStats = getUserStats(bestScoreUser);
+
     document.getElementById("gamesWon").innerHTML = "";
     document.getElementById("winRate").innerHTML = "";
     document.getElementById("gamesPlayed").innerHTML = "Total games played, by everyone: " + overallStats.gamesPlayed;
-    document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries;
-    document.getElementById("highScore").innerHTML = "Best score EVER: " + overallStats.highScore;
+    document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries + ", set by " + bestATuser;
+    document.getElementById("highScore").innerHTML = "Best score EVER: " + overallStats.highScore + ", set by " + bestScoreUser;
     document.getElementById("timesVisited").innerHTML = "Total times visited, by everyone: " + overallStats.timesVisited;
+    
 }
 
 async function updateTimesVisited(currentUsername) {
@@ -787,9 +806,6 @@ async function processClick(color) {
                     }
                     msg += "Play again?"
                     
-                    for (j=0; j<4; j++) {
-                        drawGuessCircle(j + 1, 0, code[j]);
-                    }
 
                     if (confirm(msg)) {
                         myGameArea.reset();
@@ -809,7 +825,7 @@ async function processClick(color) {
                 loseScreen();
                 setTimeout(function() {
                     alert("Nice try :(");
-                }, 1500)
+                }, 1500);
             }
         }
     }
@@ -926,6 +942,8 @@ function winScreen() {
             clearInterval(flashing)
         }
     }
+
+
 }
 
 function loseScreen() {
@@ -972,8 +990,8 @@ async function startStats(currentUsername) {
         gamesPlayed: 0,
         gamesWon: 0,
         winRate: 0,
-        averageTries: 0,
-        timesVisited: 1
+        averageTries: 10,
+        timesVisited: 0
     }
     await uploadUserStats(currentUsername);
 }
@@ -1000,6 +1018,7 @@ async function setStats(won, score) {
         newHighScore = true;
         if (score < overallStats.highScore) {
             overallStats.highScore = score;
+            overallStats.best = [currentUsername, overallStats.best[1]];
         }
     }
     else {
@@ -1020,6 +1039,7 @@ async function setStats(won, score) {
     userStats.averageTries = newAT;
     if (newAT < overallStats.averageTries) {
         overallStats.averageTries = newAT;
+        overallStats.best = [overallStats.best[0], currentUsername];
     }
 
     await uploadUserStats(currentUsername);  
