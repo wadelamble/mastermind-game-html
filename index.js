@@ -1,6 +1,10 @@
 //
 // Globals
 //
+var $  = require( 'jquery' );
+var dt = require( 'datatables.net' )();
+require( 'datatables.net-dt' )();
+
 const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2021-09-02T04:48:45Z&st=2020-09-13T20:48:45Z&spr=https&sig=tSjrhu3vPRx8OjGHFsrj5Xc5jLfAqtjVXm8olr7l4AM%3D";
 
 var myGamePiece;
@@ -193,15 +197,22 @@ testing = 0
 // end globals
 //
 
+var newSession = true;
+
+
+
+
 window.startMenu = async function startMenu() {
     if (!sessionStorage.getItem("newSessionStorage")) {
-        sessionStorage.setItem("newSessionStorage", "0000000") 
+        sessionStorage.setItem("newSessionStorage", "0000000")
+        newSession = true; 
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
         sessionStorage.setItem("username", currentUsername);
         blobExists = await checkForBlobs("mw-mastermind-usernames", "usernames")
         if (blobExists) {
             usernameInfo = await downloadFromBlob("mw-mastermind-usernames", "usernames");
+            usernameInfo = JSON.parse(usernameInfo)
             if (usernameInfo.includes(currentUsername)) {
                 userStats = getUserStats(currentUsername);
             }
@@ -219,8 +230,11 @@ window.startMenu = async function startMenu() {
             await startStats(currentUsername);
         }
         await updateTimesVisited(currentUsername); 
+
+        
     }
     else {
+        newSession = false;
         currentUsername = sessionStorage.getItem("username");
     }
 
@@ -238,24 +252,72 @@ window.startGame = function startGame() {
 
 window.startStatPage = async function startStatPage() {
     currentUsername = sessionStorage.getItem("username");
-    await getUserStats(currentUsername);
-    document.getElementById("gamesPlayed").innerHTML = "Games played: " + userStats.gamesPlayed;
-    document.getElementById("averageTries").innerHTML = "Average number of guesses: " + userStats.averageTries;
-    document.getElementById("highScore").innerHTML = "Best Score: " + userStats.highScore;
-    document.getElementById("gamesWon").innerHTML = "Games won: " + userStats.gamesWon;
-    document.getElementById("winRate").innerHTML = "Win Rate: " + userStats.winRate + "%";
-    document.getElementById("timesVisited").innerHTML = "Times visited: " +  userStats.timesVisited;
+    await getOverallStats();
+    var totalAverageTries = await table();
+    document.getElementById("gamesPlayed").innerHTML = "Total Games Played: " + overallStats.gamesPlayed;
+    document.getElementById("averageTries").innerHTML = "Average Guesses: " + totalAverageTries;
+    
 }
 
+/*
 window.overallStatPage = async function overallStatPage() {
     await getOverallStats();
-    document.getElementById("gamesWon").innerHTML = "";
-    document.getElementById("winRate").innerHTML = "";
+    document.getElementById("statsDivGlobal").style.zIndex = "1";
+    document.getElementById("statsDivUser").style.zIndex = "0";
+    
+    await table();
+
     document.getElementById("gamesPlayed").innerHTML = "Total games played, by everyone: " + overallStats.gamesPlayed;
     document.getElementById("averageTries").innerHTML = "Best average number of guesses: " + overallStats.averageTries;
     document.getElementById("highScore").innerHTML = "Best score EVER: " + overallStats.highScore;
     document.getElementById("timesVisited").innerHTML = "Total times visited, by everyone: " + overallStats.timesVisited;
+    
+}*/
+
+window.table = async function table() {
+        data = [];
+        averages = [];
+        curUserStats = userStats;
+        usernameInfo = await downloadFromBlob("mw-mastermind-usernames", "usernames");
+        usernameInfo = JSON.parse(usernameInfo)
+        var totalAverageTries = 0;
+
+        for (i=0; i<usernameInfo.length; i++) {
+            username = usernameInfo[i];
+            averages.push([userStats.averageTries, username]);
+        }
+
+        sortedAverages = averages.sort( (a, b) => {
+            return b[0] - a[0]
+        })
+
+        for (i=0; i<usernameInfo.length; i++) {
+            username = usernameInfo[i];
+            await getUserStats(username);
+            totalAverageTries += userStats.averageTries;
+            for (j=0; j<sortedAverages.length; j++) {
+                minilist = sortedAverages[j]
+                if (minilist[1] == username) {
+                    rank = sortedAverages.length - j
+                }
+            }
+
+            curRow = [rank, username, userStats.gamesPlayed, String(userStats.winRate) + "%", userStats.highScore, userStats.averageTries];
+            data.push(curRow);
+        }
+
+        totalAverageTries /= usernameInfo.length; 
+        userStats = curUserStats;
+        $(document).ready(function() {
+            $('#scoreboard').DataTable( {
+                data: data
+            } );
+        } );
+        //alert(totalAverageTries)
+        return totalAverageTries;
 }
+
+
 
 async function updateTimesVisited(currentUsername) {
     await getUserStats(currentUsername);
@@ -435,14 +497,10 @@ var myGameArea = {
         if (confirm("Are you sure you want to reset your statistics?")) {
             await startStats(currentUsername);
             await getUserStats(currentUsername);
-            startStatPage();
+            location.reload();
         }
     }
-
-        
-
 }
-
 
 function drawGuessButtons() {
     var hOffset = verticalOffsetOfCanvas;
@@ -739,12 +797,14 @@ window.switchStatClick = async function switchStatClick() {
     if (statType.value == statType.user) {
         statType.value = statType.overall;
         document.getElementById("switchStats").innerHTML = "Overall Stats";
-        overallStatPage();
+        document.getElementById("statsDivGlobal").style.zIndex = "1";
+        document.getElementById("statsDivUser").style.zIndex = "0";
     }
     else if (statType.value == statType.overall) {
         statType.value = statType.user;
         document.getElementById("switchStats").innerHTML = "Individual Stats";
-        startStatPage();
+        document.getElementById("statsDivGlobal").style.zIndex = "0";
+        document.getElementById("statsDivUser").style.zIndex = "1";
     }
 }
 
@@ -806,10 +866,9 @@ async function processClick(color) {
             }
             else if (element.y === 10) {
                 await setStats(false, 10);
-                loseScreen();
-                setTimeout(function() {
-                    alert("Nice try :(");
-                }, 1500)
+                //alert("before nice try");
+                await loseScreen();
+                alert("Nice try :(");
             }
         }
     }
@@ -928,7 +987,7 @@ function winScreen() {
     }
 }
 
-function loseScreen() {
+async function loseScreen() {
     var count = 0;
     var flashing = setInterval(change, 200);
 
@@ -972,7 +1031,7 @@ async function startStats(currentUsername) {
         gamesPlayed: 0,
         gamesWon: 0,
         winRate: 0,
-        averageTries: 0,
+        averageTries: 10,
         timesVisited: 1
     }
     await uploadUserStats(currentUsername);

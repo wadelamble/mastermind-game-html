@@ -23,7 +23,10 @@
   },
   "homepage": "https://github.com/wadelamble/mastermind-game-html#readme",
   "dependencies": {
-    "@azure/storage-blob": "^12.2.0-preview.1"
+    "@azure/storage-blob": "^12.2.0-preview.1",
+    "datatables.net": "^1.10.22",
+    "datatables.net-dt": "^1.10.22",
+    "jquery": "^3.5.1"
   },
   "devDependencies": {
     "cssnano": "^4.1.10"

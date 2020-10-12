@@ -57,10 +57,17 @@ button {
     font-size: 4vw;
 }
 
-#statsDiv {
-    background-color: grey;
-    margin-left: 30%;
-    margin-right: 30%;
+
+
+#statsDivGlobal {
+    display: block;
+    text-align: center;
+    background-color: #7589d1;
+    left: 50%;
+    margin-left: -25%;
+    width: 50%;
+    height: 62%;
+    position: absolute;
 }
 h3 {
     padding-top: 2.5%;
@@ -111,7 +118,24 @@ h3 {
     -webkit-transform: rotate(135deg);
 }
 
+#gamesPlayed {
+    position: absolute;
+    top: 78%;
+    left: 25%;
+    color: purple;
+}
 
-.test {
-    border: solid white;
+
+
+#averageTries {
+    position: absolute;
+    top: 78%;
+    left: 65%;
+    color: purple;
+}
+
+.outer {
+    width: 50%;
+    display: block;
+    padding: 0;
 }
