@@ -275,7 +275,17 @@ window.startStatPage = async function startStatPage() {
         currentUsername = sessionStorage.getItem("username");
     }
     await getOverallStats();
-    document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px"
+    //
+    //setGameBoardMArginToZero is basically saying if its on a phone fyi
+    //
+    if (setGameBoardMarginToZero == true) {
+        width = document.getElementByID("scoreboard").offsetWidth;
+        document.getElementById("statsDivGlobal").style.minWidth = String(width) + "px";
+        document.getElementById("statsDivGlobal").style.left = "0px";
+        document.getElementById("gamesPlayed").style.fontSize = "2vw";
+        document.getElementById("averageTries").style.fontSize = "2vw";
+    }
+    document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px";
     var totalAverageTries = await table();
     document.getElementById("gamesPlayed").innerHTML = "Total Games Played: " + overallStats.gamesPlayed;
     document.getElementById("averageTries").innerHTML = "Average Guesses: " + Math.round(totalAverageTries);
