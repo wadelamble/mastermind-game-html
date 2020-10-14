@@ -200,12 +200,13 @@ testing = 0
 
 var newSession = true;
 
-
+var guest = false;
 
 
 window.startMenu = async function startMenu() {
     if (!sessionStorage.getItem("newSessionStorage")) {
         sessionStorage.setItem("newSessionStorage", "0000000")
+        sessionStorage.setItem("guest", "false");
         newSession = true; 
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
@@ -214,6 +215,12 @@ window.startMenu = async function startMenu() {
                 await uploadOverallStats();
             }
         }
+
+        else if (currentUsername === "" || currentUsername == null) {
+            sessionStorage.setItem("guest", "true");
+            return;
+        }
+
         sessionStorage.setItem("username", currentUsername);
         blobExists = await checkForBlobs("mw-mastermind-usernames", "usernames")
         if (blobExists) {
@@ -241,7 +248,10 @@ window.startMenu = async function startMenu() {
     }
     else {
         newSession = false;
-        currentUsername = sessionStorage.getItem("username");
+        guest = sessionStorage.getItem("guest");
+        if (guest === "false") {
+            currentUsername = sessionStorage.getItem("username");
+        }
     }
 
     if (! await checkForBlobs("mw-mastermind-usernames", "overallStats")) {
@@ -252,16 +262,23 @@ window.startMenu = async function startMenu() {
 
 
 window.startGame = function startGame() {
-    currentUsername = sessionStorage.getItem("username");
+    guest = sessionStorage.getItem("guest")
+    if (guest === "false") {
+        currentUsername = sessionStorage.getItem("username");
+    }
     myGameArea.start();
 }
 
 window.startStatPage = async function startStatPage() {
-    currentUsername = sessionStorage.getItem("username");
+    guest = sessionStorage.getItem("guest")
+    if (guest === "false") {
+        currentUsername = sessionStorage.getItem("username");
+    }
     await getOverallStats();
+    document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px"
     var totalAverageTries = await table();
     document.getElementById("gamesPlayed").innerHTML = "Total Games Played: " + overallStats.gamesPlayed;
-    document.getElementById("averageTries").innerHTML = "Average Guesses: " + totalAverageTries;
+    document.getElementById("averageTries").innerHTML = "Average Guesses: " + Math.round(totalAverageTries);
     
 }
 
@@ -337,7 +354,6 @@ async function updateTimesVisited(currentUsername) {
 }
     
 const uploadToBlob = async (containerName, blobName, data) => {
-
     // Create a new BlobServiceClient
     const { BlobServiceClient } = require("@azure/storage-blob");
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
@@ -500,7 +516,10 @@ var myGameArea = {
         }
     },
     resetStats: async function() {
-        if (confirm("Are you sure you want to reset your statistics?")) {
+        if (guest === "true") {
+            alert("You don't have any stats to reset!")
+        }
+        else if (confirm("Are you sure you want to reset your statistics?")) {
             await startStats(currentUsername);
             await getUserStats(currentUsername);
             location.reload();
@@ -844,12 +863,17 @@ async function processClick(color) {
             }
             
             if (grade.reds === 4) {
-                newHighScore = await setStats(true, element.y);
+                if (guest === "true") {
+                    newHighScore = false;
+                }
+                else {
+                    newHighScore = await setStats(true, element.y);
+                }
                 winScreen();
                 setTimeout(function() {
                     msg = "Congratulations, you won! \n";
                     if (newHighScore) {
-                        msg += "New high score: " + userStats.highScore + "! \n"
+                        msg += "New high score: " + userStats.highScore + "! \n";
                     }
                     msg += "Play again?"
                     
@@ -868,8 +892,9 @@ async function processClick(color) {
                 
             }
             else if (element.y === 10) {
-                await setStats(false, 10);
-                //alert("before nice try");
+                if (guest === "false") {
+                    await setStats(false, 10);
+                }
                 await loseScreen();
                 alert("Nice try :(");
             }

@@ -123,6 +123,7 @@ h3 {
     top: 78%;
     left: 25%;
     color: purple;
+    font-size: 1.3vw;
 }
 
 
@@ -130,8 +131,10 @@ h3 {
 #averageTries {
     position: absolute;
     top: 78%;
-    left: 65%;
+    right: 25%;
     color: purple;
+    font-size: 1.3vw;
+    float: right;
 }
 
 .outer {
