@@ -931,9 +931,6 @@ async function processClick(color) {
                         alert("Nice try :(")
                         firstTry = false;
                     }
-                    else {
-                        alert("FAIL")
-                    }
                 }, 2000);
             }
         }
