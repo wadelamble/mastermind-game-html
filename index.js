@@ -281,12 +281,12 @@ window.startStatPage = async function startStatPage() {
     //
     if (setGameBoardMarginToZero == true) {
         width = document.getElementById("scoreboard").offsetWidth;
-        document.getElementById("statsDivGlobal").style.minWidth = String(width) + "px";
-        document.getElementById("statsDivGlobal").style.left = "0px";
+        //document.getElementById("statsDivGlobal").style.minWidth = String(width) + "px";
+        //document.getElementById("statsDivGlobal").style.left = "0px";
         document.getElementById("gamesPlayed").style.fontSize = "3vw";
         document.getElementById("averageTries").style.fontSize = "3vw";
     }
-    document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px";
+    //document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px";
     var totalAverageTries = await table();
     document.getElementById("gamesPlayed").innerHTML = "Total Games Played: " + overallStats.gamesPlayed;
     document.getElementById("averageTries").innerHTML = "Average Guesses: " + Math.round(totalAverageTries);
