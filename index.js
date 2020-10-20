@@ -1,6 +1,7 @@
 //
 // Globals
 //
+var firstTry = true
 var $  = require( 'jquery' );
 var dt = require( 'datatables.net' )();
 require( 'datatables.net-dt' )();
@@ -279,11 +280,11 @@ window.startStatPage = async function startStatPage() {
     //setGameBoardMArginToZero is basically saying if its on a phone fyi
     //
     if (setGameBoardMarginToZero == true) {
-        width = document.getElementByID("scoreboard").offsetWidth;
+        width = document.getElementById("scoreboard").offsetWidth;
         document.getElementById("statsDivGlobal").style.minWidth = String(width) + "px";
         document.getElementById("statsDivGlobal").style.left = "0px";
-        document.getElementById("gamesPlayed").style.fontSize = "2vw";
-        document.getElementById("averageTries").style.fontSize = "2vw";
+        document.getElementById("gamesPlayed").style.fontSize = "3vw";
+        document.getElementById("averageTries").style.fontSize = "3vw";
     }
     document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px";
     var totalAverageTries = await table();
@@ -315,32 +316,46 @@ window.table = async function table() {
         usernameInfo = JSON.parse(usernameInfo)
         var totalAverageTries = 0;
 
+        //get the averages
         for (i=0; i<usernameInfo.length; i++) {
             username = usernameInfo[i];
+            await getUserStats(username);
             averages.push([userStats.averageTries, username]);
         }
-
-        sortedAverages = averages.sort( (a, b) => {
-            return b[0] - a[0]
-        })
-
+        
+        //calculate and put together data
+        sortedAverages = sortArray(averages)
         for (i=0; i<usernameInfo.length; i++) {
-            username = usernameInfo[i];
+            username = sortedAverages[i][1];
             await getUserStats(username);
             totalAverageTries += userStats.averageTries;
             for (j=0; j<sortedAverages.length; j++) {
                 minilist = sortedAverages[j]
                 if (minilist[1] == username) {
-                    rank = sortedAverages.length - j
+                    rank = sortedAverages.length - j;
                 }
             }
 
             curRow = [rank, username, userStats.gamesPlayed, String(userStats.winRate) + "%", userStats.highScore, userStats.averageTries];
-            data.push(curRow);
+            data.unshift(curRow);
         }
 
-        totalAverageTries /= usernameInfo.length; 
-        userStats = curUserStats;
+        //sort through ties
+        currentAT = 0;
+        currentRank = 1;
+        for (i=0; i<data.length; i++) {
+            curRow = data[i]
+            aT = curRow[5];
+            if (currentAT == aT) {
+                data[i][0] = currentRank;
+            }
+            else {
+                currentRank = curRow[0];
+                currentAT = aT;
+            }
+        }
+        //totalAverageTries /= usernameInfo.length; 
+        //userStats = curUserStats;
         $(document).ready(function() {
             $('#scoreboard').DataTable( {
                 data: data
@@ -482,6 +497,8 @@ var myGameArea = {
         temp = 0;        
         code = [];
         gradeRow = 0
+
+        firstTry = true
 
         this.start();
     },
@@ -905,8 +922,19 @@ async function processClick(color) {
                 if (guest === "false") {
                     await setStats(false, 10);
                 }
-                await loseScreen();
-                alert("Nice try :(");
+                loseScreen();
+                setTimeout(function() {
+                    for (j=0; j<4; j++) {
+                        drawGuessCircle(j + 1, 0, code[j]);
+                    }
+                    if (firstTry) {
+                        alert("Nice try :(")
+                        firstTry = false;
+                    }
+                    else {
+                        alert("FAIL")
+                    }
+                }, 2000);
             }
         }
     }
@@ -1003,6 +1031,10 @@ function drawGradeCircle(x_loc, y_loc, color) {
     circle(grader, color, this.x, this.y);
 }
 
+function sortArray(array) {
+    sortedArray = array.sort(function(a,b){return b[0] - a[0]})
+    return sortedArray
+}
 
 function winScreen() {
     var mode = 0;
@@ -1027,13 +1059,13 @@ function winScreen() {
 
 }
 
-async function loseScreen() {
+function loseScreen() {
     var count = 0;
     var flashing = setInterval(change, 200);
 
     function change() {
         count++;
-        if (count == 5) {
+        if (count == 10) {
             clearInterval(flashing)
         }
         
@@ -1045,13 +1077,8 @@ async function loseScreen() {
         }
         
     }
-
-    setTimeout(function() {
-        for (j=0; j<4; j++) {
-            drawGuessCircle(j + 1, 0, code[j]);
-        }
-    }, 1000);
 }
+
 
 async function uploadUserStats(currentUsername) {
     statsStr = JSON.stringify(userStats);
@@ -1207,7 +1234,6 @@ function computerCode() {
     for (i=0; i<4; i++) {
         code.push(colors[Math.floor(Math.random() * 6)]);
     }
-    //alert(code)
 }
 
 
