@@ -173,8 +173,7 @@ var overallStats = {
     gamesPlayed: 0,
     averageTries: 10,
     highScore: 10,
-    timesVisited: 0,
-    best: ["nobody, yet", "nobody, yet"]
+    timesVisited: 0
 }
 
 var userStats = {
@@ -1123,7 +1122,6 @@ async function setStats(won, score) {
         newHighScore = true;
         if (score < overallStats.highScore) {
             overallStats.highScore = score;
-            overallStats.best = [currentUsername, overallStats.best[1]];
         }
     }
     else {
@@ -1144,7 +1142,6 @@ async function setStats(won, score) {
     userStats.averageTries = newAT;
     if (newAT < overallStats.averageTries) {
         overallStats.averageTries = newAT;
-        overallStats.best = [overallStats.best[0], currentUsername];
     }
 
     await uploadUserStats(currentUsername);  
