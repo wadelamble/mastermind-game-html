@@ -1103,14 +1103,14 @@ async function startStats(currentUsername) {
 
 async function getOverallStats() {
     containerName = "mw-mastermind-usernames";
-    statsStr = await downloadFromBlob(containerName, "overallstats")
+    statsStr = await downloadFromBlob(containerName, "overallStats")
     overallStats = JSON.parse(statsStr);
 }
 
 async function uploadOverallStats() {
     containerName = "mw-mastermind-usernames";
     statsStr = JSON.stringify(overallStats);
-    await uploadToBlob(containerName, "overallstats", statsStr)
+    await uploadToBlob(containerName, "overallStats", statsStr)
     
 }
 
