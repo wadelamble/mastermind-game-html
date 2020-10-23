@@ -191,6 +191,8 @@ var statType = {
     value: "individualStats"
 }
 
+var grading = false;
+
 //azure blob storage globals
 testing = 0
 
@@ -830,7 +832,8 @@ function helpButtonClick() {
 
 function backButtonClick() {
     if (mode.value == mode.codeMaker) {
-        myGameArea.backCM();
+        alert(grading)
+        myGameArea.backCM(grading);
     }
     else {
         myGameArea.backCB()
@@ -942,6 +945,7 @@ async function processClick(color) {
             code.push(color)
             if (temp === 4) {
                 computerGuess(0)
+                grading = true;
             }
         }
         else {
