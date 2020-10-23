@@ -210,7 +210,8 @@ window.startMenu = async function startMenu() {
         newSession = true; 
         helpButtonClick();
         currentUsername = window.prompt("Enter Player Name");
-        if (currentUsername  === "resetOverallStats") {
+        currentUsername = currentUsername.toLowerCase();
+        if (currentUsername  === "resetoverallstats") {
             if (confirm("Are you sure you want to reset overall stats")) {
                 await uploadOverallStats();
             }
@@ -285,10 +286,9 @@ window.startStatPage = async function startStatPage() {
         document.getElementById("gamesPlayed").style.fontSize = "3vw";
         document.getElementById("averageTries").style.fontSize = "3vw";
     }
-    //document.getElementById("statsDivGlobal").style.minWidth = String(screenSize.width * 1.235) + "px";
-    var totalAverageTries = await table();
+    var medianAverageTries = await table();
     document.getElementById("gamesPlayed").innerHTML = "Total Games Played: " + overallStats.gamesPlayed;
-    document.getElementById("averageTries").innerHTML = "Average Guesses: " + Math.round(totalAverageTries);
+    document.getElementById("averageTries").innerHTML = "Average Guesses: " + medianAverageTries;
     
 }
 
@@ -324,6 +324,7 @@ window.table = async function table() {
         
         //calculate and put together data
         sortedAverages = sortArray(averages)
+        medianAT = sortedAverages[Math.round(sortedAverages.length / 2) - 1][0]
         for (i=0; i<usernameInfo.length; i++) {
             username = sortedAverages[i][1];
             await getUserStats(username);
@@ -334,7 +335,7 @@ window.table = async function table() {
                     rank = sortedAverages.length - j;
                 }
             }
-
+            
             curRow = [rank, username, userStats.gamesPlayed, String(userStats.winRate) + "%", userStats.highScore, userStats.averageTries];
             data.unshift(curRow);
         }
@@ -361,7 +362,7 @@ window.table = async function table() {
             } );
         } );
         //alert(totalAverageTries)
-        return totalAverageTries;
+        return medianAT;
 }
 
 
@@ -1138,7 +1139,8 @@ async function setStats(won, score) {
     currentAT = userStats.averageTries;
     currentTotalPoints = currentAT * (userStats.gamesPlayed - 1);
     newTotalPoints = currentTotalPoints + score;
-    newAT = Math.round(newTotalPoints / userStats.gamesPlayed);
+    newAT = newTotalPoints / userStats.gamesPlayed;
+    newAT = newAT.toFixed(3);
     userStats.averageTries = newAT;
     if (newAT < overallStats.averageTries) {
         overallStats.averageTries = newAT;
