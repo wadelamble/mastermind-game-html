@@ -6,7 +6,7 @@ var $  = require( 'jquery' );
 var dt = require( 'datatables.net' )();
 require( 'datatables.net-dt' )();
 
-const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2021-09-02T04:48:45Z&st=2020-09-13T20:48:45Z&spr=https&sig=tSjrhu3vPRx8OjGHFsrj5Xc5jLfAqtjVXm8olr7l4AM%3D";
+const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/mw-mastermind-stats?sp=r&st=2022-01-12T00:43:27Z&se=2022-01-12T08:43:27Z&spr=https&sv=2020-08-04&sr=c&sig=lcw8Iq16tlzj7O19baeQ1YlEoBFlxc60rsFfKCOhhn4%3D";
 
 var myGamePiece;
 
