@@ -6,6 +6,7 @@ var $  = require( 'jquery' );
 var dt = require( 'datatables.net' )();
 require( 'datatables.net-dt' )();
 
+// keep this up to date
 const blobSasUrl = "https://mileswadestorage.blob.core.windows.net/?sp=r&st=2022-01-12T00:43:27Z&se=2022-01-12T08:43:27Z&spr=https&sv=2020-08-04&sr=c&sig=lcw8Iq16tlzj7O19baeQ1YlEoBFlxc60rsFfKCOhhn4%3D";
 
 var myGamePiece;
